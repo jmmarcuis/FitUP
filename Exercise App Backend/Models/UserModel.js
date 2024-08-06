@@ -3,17 +3,19 @@ const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  userName: { type: String, required: true, unique: true },
+  firstName: { type: String },
+  lastName: { type: String },
+  userName: { type: String, unique: true, sparse: true,    default: ''  },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  dateOfBirth: { type: Date, required: true },
-  height: { type: Number, required: true }, // Stored in cm
-  weight: { type: Number, required: true }, // Stored in kg
+  dateOfBirth: { type: Date },
+  height: { type: Number }, // Stored in cm
+  weight: { type: Number }, // Stored in kg
   heightInInches: { type: Number }, // Optional, stored in inches
   weightInPounds: { type: Number }, // Optional, stored in pounds
-  created_at: { type: Date, default: Date.now }
+  created_at: { type: Date, default: Date.now },
+  registrationDate: { type: Date, default: Date.now },
+  isProfileCompleted: { type: Boolean, default: false },
 });
 
 // Middleware to handle conversions before saving
@@ -24,7 +26,8 @@ UserSchema.pre('save', function(next) {
   if (this.isModified('weightInPounds')) {
     this.weight = poundsToKilograms(this.weightInPounds);
   }
-  next();
+  next(); 
+  
 });
 
 // Hash the password before saving the user model
