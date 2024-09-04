@@ -13,6 +13,7 @@ interface User {
   dateOfBirth?: string;
   height?: number;
   weight?: number;
+  profilePicture?:string;
 }
 
 export interface AuthContextType {

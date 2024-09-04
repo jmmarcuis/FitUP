@@ -4,5 +4,6 @@
      dateOfBirth: string;
     height: number;
     weight: number;
+    profilePicture:string;
   }
   

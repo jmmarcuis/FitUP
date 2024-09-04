@@ -1,6 +1,9 @@
 const User = require('../Models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' })
+const cloudinary = require('../Config/cloudinaryConfig').cloudinary;
 
 // Fetch user 
 exports.fetchUser = async (req, res) => {
@@ -68,8 +71,9 @@ exports.completeProfile = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+
 // Login
- 
 exports.login = async (req, res) => {
   const { identifier, password } = req.body;
 
@@ -125,6 +129,36 @@ exports.updateUser = async (req, res) => {
     await user.save();
     res.json(user);
 
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+//Upload Profile Image
+exports.uploadProfilePicture = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ message: 'No files were uploaded.' });
+    }
+
+    const file = req.files.profilePicture;
+
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: 'profile_pictures',
+      // Add any desired transformations or options here
+    });
+
+    // Update user's profilePicture with the Cloudinary URL
+    user.profilePicture = result.secure_url;
+    await user.save();
+
+    res.json({ message: 'Profile picture uploaded successfully', url: result.secure_url });
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server Error');

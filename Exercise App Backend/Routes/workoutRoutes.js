@@ -3,14 +3,20 @@ const router = express.Router();
 const workoutController = require('../controllers/workoutController');
 const { protect } = require('../Middleware/authMiddleware');
 
-// All routes are now protected
+// All routes are protected
 router.use(protect);
 
-router.get('/workouts', workoutController.getAllWorkouts);
-router.get('/exercises', workoutController.getExercises);
-router.post('/workouts', workoutController.createWorkout);
-router.post('/workouts/:id/exercises', workoutController.addExerciseToWorkout);
-router.delete('/workouts/:id', workoutController.deleteWorkout);
-router.put('/workouts/:id', workoutController.updateWorkout);
+// Workout routes
+router.post('/', workoutController.createWorkout);
+router.get('/date/:date', workoutController.getWorkoutsByDate);
+router.get('/:id', workoutController.getWorkout);
+router.put('/:id', workoutController.updateWorkout);
+router.delete('/:id', workoutController.deleteWorkout);
+
+// Exercise and set management
+router.post('/add-exercise', workoutController.addExerciseToWorkout);
+router.post('add-set',workoutController.addSetToExercise)
+router.put('/update-set', workoutController.updateSet);
+router.delete('/delete-set', workoutController.deleteSetFromExercise);   
 
 module.exports = router;

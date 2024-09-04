@@ -24,6 +24,7 @@ const CompleteProfilePage: React.FC = () => {
       dateOfBirth,
       height: Number(height),
       weight: Number(weight),
+      
     };
     try {
       await completeProfile(profileData);

@@ -10,4 +10,4 @@ const ExerciseSchema = new Schema({
   instructions: { type: String }
 });
 
-module.exports = mongoose.models.Exercise || mongoose.model('Exercise', ExerciseSchema);
+module.exports = mongoose.model('Exercise', ExerciseSchema);
