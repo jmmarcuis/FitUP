@@ -1,23 +1,21 @@
 .dashboard-sidebar {
   width: 80px;
-  background-color: #ffffff;
-  color: #9D9D9D;
+  background-color: #000000;
+  color: #9d9d9d;
   height: 100vh;
   padding: 2rem 0;
   display: flex;
   flex-direction: column;
- 
+  justify-content: space-between;
+
   .dashboard-logo {
     text-align: center;
     margin-bottom: 2rem;
-   
-    // Add your logo styles here
   }
 
   nav {
     flex-grow: 1;
     display: flex;
-    flex-direction: column;
 
     ul {
       list-style-type: none;
@@ -33,21 +31,29 @@
         align-items: center;
         height: 60px;
 
-        a, button {
+        a,
+        button {
+          color: #adaaaa;
           display: flex;
+          text-decoration: none;
           justify-content: center;
           align-items: center;
-          width: 100%;
-          height: 100%;
-          color: inherit;
-          text-decoration: none;
+          width: 3rem;
+          height: 3rem;
+          border-radius: 20%;
+          cursor: pointer;
           background: none;
           border: none;
-          cursor: pointer;
-          transition: color 0.3s ease;
+          transition: background-color 0.3s ease-in, color 0.3s ease-in;
 
           &:hover {
-            color: #333;
+            color: #ffffff;
+            background-color: #b3c73a;
+          }
+
+          &.active {
+            color: #ffffff;
+            background-color: #bbf246;
           }
 
           .iconify {

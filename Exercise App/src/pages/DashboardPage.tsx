@@ -10,8 +10,6 @@ import { motion } from 'framer-motion';
 
 import DashboardHome from '../components/Dashboard/DashboardHome';
 import Workouts from '../components/Dashboard/Workouts';
-import Progress from '../components/Dashboard/Progress';
-import Nutrition from '../components/Dashboard/Nutrition';
 import Settings from '../components/Dashboard/Settings';
 import Messages from '../components/Dashboard/Messages';
 
@@ -41,8 +39,6 @@ const DashboardPage: React.FC = () => {
             <Routes>
               <Route path="/" element={<DashboardHome />} />
               <Route path="workouts" element={<Workouts />} />
-              <Route path="progress" element={<Progress />} />
-              <Route path="nutrition" element={<Nutrition />} />
               <Route path="settings" element={<Settings />} />
               <Route path="messages" element={<Messages />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
