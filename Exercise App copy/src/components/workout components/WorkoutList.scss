@@ -1,0 +1,28 @@
+$primary-color: #fff5ea;
+$secondary-color: #0c0c0c;
+$text-color: #2f2f2f;
+$background-color: #f7f7f7;
+$background-color-v2: transparent;
+$button-background: #4a90e2;
+$button-hover-background: #357ab7;
+$button-text-color: #ffffff;
+
+.workout-list-empty{
+    height: 60vh;
+     margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-workout-button{
+    background-color: transparent;
+      color: $text-color;
+      border: $text-color 2px solid;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+}
