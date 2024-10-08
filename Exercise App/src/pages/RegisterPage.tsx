@@ -1,115 +1,208 @@
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { useNavigate,Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebook,
-  faGoogle,
-  faApple,
-} from "@fortawesome/free-brands-svg-icons";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ReactModal from "react-modal";
 import "./RegisterPage.scss";
+import { Icon } from "@iconify/react";
+
+import { TermsandConditionsModal } from "../components/Modals/TermsandConditionsModal";
+import { OTPModal } from "../components/Modals/OTPModal";
+
+ReactModal.setAppElement("#root");
 
 const RegisterPage: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState(false);
+  const [isTermsandConditionModalOpen, setIsTermsandConditionModalOpen] =
+    useState(false);
+  // State variables for form inputs
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [userName, setUserName] = useState(""); 
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
 
-  const handleRegister = async (event: React.FormEvent) => {
-    event.preventDefault();
-  
-
-    if (!email || !userName || !password || !confirmPassword) {
-      toast.error("All fields are required");
-      return;
-    }
-  
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    }
-  
-    try {
-      await register(email, password, userName);
-            navigate("/complete-profile");
-    } catch (error) {
-      console.error("Registration error: ", error);
-      toast.error("Registration failed. Please try again.");
-    }
+  const handleOTPOpenModal = () => {
+    setIsOTPModalOpen(true);
   };
+
+  const handleOTPCloseModal = () => {
+    setIsOTPModalOpen(false);
+  };
+
   
+  const handleTnCCOpenModal = () => {
+    setIsTermsandConditionModalOpen(true);
+  };
+
+  const handleTnCCloseModal = () => {
+    setIsTermsandConditionModalOpen(false);
+  };
+
   return (
     <>
-      <div className="register-page">
-        <h2>Welcome!</h2>
-        <form onSubmit={handleRegister}>
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <p>
-            Already have an account? <Link to="/login">Login</Link>
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            type="submit"
-          >
-            Register
-          </motion.button>
-        </form>
+      <div className="AuthenticationPage-Background">
+        <div className="create-account">
+          <h1>Create your account</h1>
+          <form>
+            <div className="input-row">
+              <div className="input-group half">
+                <label htmlFor="first-name">First Name</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:user" />
+                  <input
+                    type="text"
+                    id="first-name"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="input-group half">
+                <label htmlFor="last-name">Last Name</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:user" />
+                  <input
+                    type="text"
+                    id="last-name"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
 
-        <div className="register-through-socials">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <FontAwesomeIcon icon={faApple} className="register__icon" />
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <FontAwesomeIcon icon={faFacebook} className="register__icon" />
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <FontAwesomeIcon icon={faGoogle} className="register__icon" />
-          </motion.div>
+            <div className="input-group">
+              <label htmlFor="email">Email</label>
+              <div className="input-with-icon">
+                <Icon icon="mdi:alternate-email" />
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="password">Password</label>
+              <div className="input-with-icon">
+                <Icon icon="mdi:verified-user" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} />
+                </button>
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-group half">
+                <label htmlFor="gender">Gender</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:people" style={{ color: "black" }} />
+                  <select
+                    id="gender"
+                    className="gender-select"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                  >
+                    <option value="">Choose Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="input-group half">
+                <label htmlFor="dob">Date of Birth</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:calendar-month" />
+                  <input
+                    type="date"
+                    id="dob"
+                    placeholder="Date of Birth"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-group half">
+                <label htmlFor="weight">Weight</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:weight-kilogram" />
+                  <input
+                    type="number"
+                    id="weight"
+                    placeholder="Your Weight"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                  />
+                  <span className="unit">KG</span>
+                </div>
+              </div>
+              <div className="input-group half">
+                <label htmlFor="height">Height</label>
+                <div className="input-with-icon">
+                  <Icon icon="mdi:human-male-height" />
+                  <input
+                    type="number"
+                    id="height"
+                    placeholder="Your Height"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                  />
+                  <span className="unit">CM</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="checkbox-group">
+              <input type="checkbox" id="terms" />
+              <label htmlFor="terms" >
+                I have read & agreed to PowerSync's <span onClick={handleTnCCOpenModal}>Terms & Condition</span>
+              </label>
+            </div>
+
+            <div className="form-footer">
+              <h2>Let's complete your profile</h2>
+              <p>It will help us to know more about you!</p>
+              <button onClick={handleOTPOpenModal} className="btn-finish">
+                Finish
+              </button>
+              <p className="sign-in-link">
+                Already have an account? <a href="#">Sign In</a>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
-      <ToastContainer />
+
+      <OTPModal
+        isOpen={isOTPModalOpen}
+        onClose={handleOTPCloseModal}
+        otpLength={6}
+      />
+      <TermsandConditionsModal isOpen={isTermsandConditionModalOpen} onClose={handleTnCCloseModal} />
     </>
   );
 };

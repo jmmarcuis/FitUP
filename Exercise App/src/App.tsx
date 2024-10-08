@@ -29,10 +29,10 @@ const ProtectedRoute: React.FC<{
     return <div>Loading...</div>;
   }
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    // return <Navigate to="/login" />;
   }
   if (requireProfileCompletion && !isProfileCompleted) {
-    return <Navigate to="/complete-profile" />;
+    // return <Navigate to="/complete-profile" />;
   }
   return element;
 };

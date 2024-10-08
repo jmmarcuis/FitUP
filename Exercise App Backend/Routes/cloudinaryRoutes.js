@@ -1,36 +1,42 @@
+// cloudinaryRoutes.js
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { cloudinary } = require('../Config/cloudinaryConfig');
+const path = require('path');
+const imageController = require('../Controllers/imageController');
 
-const upload = multer({ storage: multer.memoryStorage() });
-
-router.post('/upload', upload.single('image'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-
-  try {
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: 'test' },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-
-      stream.end(req.file.buffer);
-    });
-
-    res.json({
-      message: 'File uploaded successfully',
-      url: result.secure_url
-    });
-  } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'Failed to upload file' });
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/') // Make sure this folder exists
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
   }
 });
+
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+});
+
+// Check file type
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb('Error: Images Only!');
+  }
+}
+
+// Route to update client's profile picture
+router.post('/upload-image/:clientId', upload.single('image'), imageController.uploadClientImage);
 
 module.exports = router;

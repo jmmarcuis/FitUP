@@ -1,166 +1,183 @@
-const User = require('../Models/userModel');
+ 
+const Client = require ('../Models/ClientModel')
 const jwt = require('jsonwebtoken');
+const { generateOTP, sendOTPEmail } = require('../Utilities/emailUtilities');
 const bcrypt = require('bcryptjs');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' })
-const cloudinary = require('../Config/cloudinaryConfig').cloudinary;
 
-// Fetch user 
-exports.fetchUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
-  }
-};
 
-// Register
 exports.register = async (req, res) => {
-  const { email, password, userName } = req.body;
-  
-  if (!userName || userName.trim() === '') {
-    return res.status(400).json({ message: 'Username is required and cannot be empty' });
-  }
-
   try {
-    let user = await User.findOne({ $or: [{ email }, { userName }] });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-    
-    user = new User({ email, password, userName });
-    await user.save();
+    const { 
+      firstName, 
+      lastName, 
+      email, 
+      password, 
+      dateOfBirth, 
+      height, 
+      weight 
+    } = req.body;
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(201).json({ token });
-
-  } catch (error) {
-    console.error('Registration error:', error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Username or email already exists' });
-    }
-    res.status(500).json({ message: 'Server error during registration', error: error.message });
-  }
-};
-
-// Complete Profile
-exports.completeProfile = async (req, res) => {
-  const { firstName, lastName,   dateOfBirth, height, weight } = req.body;
-  
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    
-    // Update user profile
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.dateOfBirth = dateOfBirth;
-    user.height = height;
-    user.weight = weight;
-    user.isProfileCompleted = true;  // Mark the profile as completed
-    
-    await user.save();
-    res.json({ message: 'Profile completed successfully' });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
-  }
-};
-
-
-// Login
-exports.login = async (req, res) => {
-  const { identifier, password } = req.body;
-
-  if (!identifier) {
-    return res.status(400).json({ message: "Email or username is required" });
-  }
-
-  try {
-    let user;
-    if (identifier.includes('@')) {
-      user = await User.findOne({ email: identifier });
-    } else {
-      user = await User.findOne({ userName: identifier });
+    // Input validation
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    // Check if user already exists
+    const existingClient = await Client.findOne({ email });
+    if (existingClient) {
+      return res.status(400).json({ message: 'Email already in use' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login', error: error.message });
-  }
-};
-
-// Update Account
-exports.updateUser = async (req, res) => {
-  const { firstName, lastName, email, dateOfBirth, height, weight } = req.body;
-  
-  try {
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.email = email || user.email;
-    user.dateOfBirth = dateOfBirth || user.dateOfBirth;
-    user.height = height || user.height;
-    user.weight = weight || user.weight;
-
-    await user.save();
-    res.json(user);
-
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
-  }
-};
-
-//Upload Profile Image
-exports.uploadProfilePicture = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ message: 'No files were uploaded.' });
-    }
-
-    const file = req.files.profilePicture;
-
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
-      folder: 'profile_pictures',
-      // Add any desired transformations or options here
+    // Create new client
+    const client = new Client({
+      firstName,
+      lastName,
+      email,
+      password,
+      dateOfBirth,
+      height,
+      weight,
+      clientImage: 'https://res.cloudinary.com/drf4qnjow/image/upload/v1728341592/profile_pictures/placeholder.jpg'  
     });
 
-    // Update user's profilePicture with the Cloudinary URL
-    user.profilePicture = result.secure_url;
-    await user.save();
+    // Generate and set OTP
+    const otp = generateOTP();
+    client.otp = otp;
+    client.otpExpires = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
 
-    res.json({ message: 'Profile picture uploaded successfully', url: result.secure_url });
+    // Save the client
+    await client.save();
+
+    // Send OTP email
+    await sendOTPEmail(email, otp);
+
+    res.status(201).json({ 
+      message: 'Registration successful. Please check your email for the OTP to verify your account.',
+      clientId: client._id
+    });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server Error');
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Error registering new client. Please try again later.' });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Input validation
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    // Find the client
+    const client = await Client.findOne({ email });
+    if (!client) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if email is verified
+    if (!client.isVerified) {
+      return res.status(403).json({ message: 'Email not verified. Please verify your email before logging in.' });
+    }
+
+    // Check password
+    const isMatch = await client.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: client._id, email: client.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      client: {
+        id: client._id,
+        firstName: client.firstName,
+        lastName: client.lastName,
+        userName: client.userName,
+        email: client.email
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Error logging in. Please try again later.' });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Input validation
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    const client = await Client.findOne({ 
+      email, 
+      otp, 
+      otpExpires: { $gt: Date.now() } 
+    });
+
+    if (!client) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    client.isVerified = true;
+    client.otp = undefined;
+    client.otpExpires = undefined;
+    await client.save();
+
+    res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ message: 'Error verifying email. Please try again later.' });
+  }
+};
+
+exports.resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Input validation
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const client = await Client.findOne({ email });
+
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    if (client.isVerified) {
+      return res.status(400).json({ message: 'Email is already verified' });
+    }
+
+    const otp = generateOTP();
+    client.otp = otp;
+    client.otpExpires = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+
+    await client.save();
+
+    await sendOTPEmail(email, otp);
+
+    res.status(200).json({ message: 'New OTP sent successfully' });
+  } catch (error) {
+    console.error('OTP resend error:', error);
+    res.status(500).json({ message: 'Error resending OTP. Please try again later.' });
   }
 };

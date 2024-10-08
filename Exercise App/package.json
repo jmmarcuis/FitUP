@@ -12,7 +12,6 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@iconify/react": "^5.0.2",
     "@types/react-modal": "^3.16.3",
     "axios": "^1.7.3",
     "date-fns": "^3.6.0",
@@ -26,6 +25,7 @@
     "react-toastify": "^10.0.5"
   },
   "devDependencies": {
+    "@iconify/react": "^4.1.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
