@@ -17,9 +17,9 @@ const DashboardPage: React.FC = () => {
   const { isMobile } = useViewport();
 
   const pageTransition = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
+    initial: { y: 20 },
+    animate: { y: 0 },
+    exit: { y: -20 },
   };
 
   return (

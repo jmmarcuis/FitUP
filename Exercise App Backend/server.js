@@ -2,7 +2,10 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-//Api keys config
+//Middleware
+const { verifyToken } = require('./Middleware/authMiddleware');
+
+// Api keys config
 const connectDB = require('./Config/dbConfig');
 const { cloudinary, checkCloudinaryConfig } = require('./Config/cloudinaryConfig');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
@@ -22,24 +25,20 @@ app.use(fileUpload({
   tempFileDir: '/tmp/'
 }));
 
-
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Apply verifyToken middleware only to routes that require authentication
+// app.use('/exercise', verifyToken, exerciseRoutes);
+// app.use('/workout', verifyToken, workoutRoutes);
+
+// Public routes
 app.use('/auth', authRoutes);
-// app.use('/exercise', exerciseRoutes);
-// app.use('/workout', workoutRoutes);
 app.use('/cloudinary', cloudinaryRoutes);
 
 // Sets port to localhost 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  
 });
-
-
-
- 

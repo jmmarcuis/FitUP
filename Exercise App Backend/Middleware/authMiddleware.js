@@ -1,35 +1,22 @@
-// const jwt = require('jsonwebtoken');
-// const User = require('../Models/clientModel'); 
-// exports.protect = async (req, res, next) => {
-//   let token;
+const jwt = require('jsonwebtoken');
 
-//   // Check for the token in the Authorization header
-//   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-//     token = req.headers.authorization.split(' ')[1];
-//   }
+const verifyToken = (req, res, next) => {
+  // Get the token from headers
+  const token = req.header('Authorization')?.split(' ')[1];
 
-//   // If no token, return an unauthorized response
-//   if (!token) {
-//     return res.status(401).json({ message: 'Not authorized, no token' });
-//   }
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
 
-//   try {
-//     // Verify the token
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    // Verify the token using the secret key
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.client = verified; // Attach the decoded token to the request (you can access client info in routes)
     
-//     // Fetch the user from the database
-//     const user = await User.findById(decoded.id).select('-password');
+    next(); // Proceed to the next middleware or route handler
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid or expired token.' });
+  }
+};
 
-//     // If no user is found, return an unauthorized response
-//     if (!user) {
-//       return res.status(401).json({ message: "Not authorized, no user found" });
-//     }
-
-//     // Attach the user to the request object
-//     req.user = user;
-//     next(); // Proceed to the next middleware or route handler
-//   } catch (error) {
-//     // Handle token verification errors
-//     res.status(401).json({ message: "Not authorized, token failed" });
-//   }
-// };
+module.exports = { verifyToken };

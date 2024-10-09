@@ -9,33 +9,13 @@ import { AuthProvider } from "./Context/AuthContext";
 import { WorkoutProvider } from "./Context/WorkoutContext";
 import { ResponsiveProvider } from "./Context/ResponsiveContext";
 import { SearchProvider } from "./Context/SearchContext";
-import { useAuth } from "./hooks/useAuth";
 import Homepage from "./pages/Homepage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import CompleteProfilePage from "./pages/CompleteProfilePage";
+import DashboardPage from "./pages/DashboardPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./App.scss";
 import { AnimatePresence } from "framer-motion";
-
-import DashboardPage from "./pages/DashboardPage";
-
-const ProtectedRoute: React.FC<{
-  element: React.ReactElement;
-  requireProfileCompletion?: boolean;
-}> = ({ element, requireProfileCompletion = true }) => {
-  const { isAuthenticated, isProfileCompleted, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (!isAuthenticated) {
-    // return <Navigate to="/login" />;
-  }
-  if (requireProfileCompletion && !isProfileCompleted) {
-    // return <Navigate to="/complete-profile" />;
-  }
-  return element;
-};
 
 const App: React.FC = () => {
   return (
@@ -49,15 +29,6 @@ const App: React.FC = () => {
                   <Route path="/" element={<Homepage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
-                  <Route
-                    path="/complete-profile"
-                    element={
-                      <ProtectedRoute
-                        element={<CompleteProfilePage />}
-                        requireProfileCompletion={false}
-                      />
-                    }
-                  />
                   <Route
                     path="/dashboard/*"
                     element={

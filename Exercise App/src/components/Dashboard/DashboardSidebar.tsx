@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import "./DashboardSidebar.scss";
 
 const DashboardSidebar: React.FC = () => {
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const [activeItem, setActiveItem] = useState('home');
@@ -15,7 +13,7 @@ const DashboardSidebar: React.FC = () => {
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    logout();
+ 
     navigate("/login"); // Redirect to the login page after logout
   };
 
