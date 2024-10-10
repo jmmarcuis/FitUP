@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import "./RegisterPage.scss";
 import { Icon } from "@iconify/react";
@@ -9,15 +9,15 @@ import { ToastContainer, toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
-import {  useNavigate, Link } from "react-router-dom";
-
- 
+import { useNavigate, Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 ReactModal.setAppElement("#root");
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isOTPModalOpen, setIsOTPModalOpen] = useState(false);
@@ -141,6 +141,15 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
+    const captchaToken = recaptchaRef.current?.getValue();
+
+    if (!captchaToken) {
+      toast.error("Please verify the reCAPTCHA!");
+      return;
+    }
+    // Proceed with form submission if reCAPTCHA is valid
+    toast.success("DEBUG!!!! Form submission successful!");
+
     setIsButtonDisabled(true);
     setIsLoading(true);
 
@@ -153,6 +162,7 @@ const RegisterPage: React.FC = () => {
       gender,
       weight: parseFloat(weight),
       height: parseFloat(height),
+      captchaToken,
     };
 
     try {
@@ -205,11 +215,11 @@ const RegisterPage: React.FC = () => {
       // Clear pending registration data after successful verification
       localStorage.removeItem("pendingRegistration");
 
-            // Redirect to the dashboard or home page
-            setTimeout(() => {
-              navigate("/registration"); // Adjust this route as needed
-            }, 1500);
-
+      // Redirect to the dashboard or home page
+      setTimeout(() => {
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard"); // Adjust this route as needed
+      }, 1500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message: string }>;
@@ -501,7 +511,6 @@ const RegisterPage: React.FC = () => {
                   <span onClick={handleTnCCOpenModal}>Terms & Condition</span>
                 </label>
               </div>
-
               <div className="form-footer">
                 <h2>Let's complete your profile</h2>
                 <p>It will help us to know more about you!</p>
@@ -518,6 +527,12 @@ const RegisterPage: React.FC = () => {
                     "Finish"
                   )}
                 </motion.button>
+             
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey="6Le-Nl0qAAAAAOetJJVm9zgqPFZytBShMJMd8KyO"
+                />
+
                 <p className="sign-in-link">
                   Already have an account?{" "}
                   <Link to="/login">

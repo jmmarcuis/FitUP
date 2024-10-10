@@ -5,7 +5,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { AuthProvider } from "./Context/AuthContext";
 import { WorkoutProvider } from "./Context/WorkoutContext";
 import { ResponsiveProvider } from "./Context/ResponsiveContext";
 import { SearchProvider } from "./Context/SearchContext";
@@ -19,7 +18,7 @@ import { AnimatePresence } from "framer-motion";
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
+
       <WorkoutProvider>
         <ResponsiveProvider>
           <SearchProvider>
@@ -46,7 +45,6 @@ const App: React.FC = () => {
           </SearchProvider>
         </ResponsiveProvider>
       </WorkoutProvider>
-    </AuthProvider>
   );
 };
 

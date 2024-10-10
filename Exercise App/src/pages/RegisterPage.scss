@@ -54,7 +54,7 @@ $accent-color: #bbf246;
     label {
       display: block;
       margin-bottom: 2px;
-      font-size: 14px;
+      font-size: 12px;
       color: $primary-color;
     }
 
@@ -66,11 +66,11 @@ $accent-color: #bbf246;
       input,
       select {
         width: 100%;
-        padding: 10px 10px 10px 40px; // Ensure space for the icon
+        padding: 8px 8px 8px 40px; // Ensure space for the icon
         background: transparent; // Keep it transparent for input
         border: none;
         color: $primary-color; // Text color
-        font-size: 16px;
+        font-size: 14px;
 
         // Add specific styles for select
         &:focus {
@@ -139,7 +139,7 @@ $accent-color: #bbf246;
 
     label {
       margin-left: 10px;
-      font-size: 14px;
+      font-size: 13px;
       color: $primary-color;
     }
 
@@ -151,8 +151,8 @@ $accent-color: #bbf246;
   }
 
   .btn-finish {
-    width: 100%;
-    padding: 15px;
+    width: 60%;
+    padding: 11px;
     background-color: $accent-color;
     border: none;
     border-radius: 25px;
@@ -161,7 +161,7 @@ $accent-color: #bbf246;
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.3s ease;
-
+margin-bottom: 10px;
     &.disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -171,13 +171,16 @@ $accent-color: #bbf246;
 
   .form-footer {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     h2 {
-      font-size: 20px;
-      margin-bottom: 5px;
+      font-size: 17px;
     }
 
     p {
+      font-size: 14px;
       color: $primary-color;
       margin-bottom: 15px;
     }

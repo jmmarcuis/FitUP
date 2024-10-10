@@ -6,23 +6,46 @@ import "./LoginPage.scss";
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { ClipLoader } from "react-spinners";
- import { useLogin } from "../hooks/useLogin";
+import { useLogin } from "../hooks/useLogin";
+
 const LoginPage: React.FC = () => {
   const { handleLogin, isLoading, isLoginComplete, isButtonDisabled } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const notifyNextFeature = () => toast.info("This feature is coming soon!");
 
- 
-
-  const notifyNextFeature = () => toast("This will be a feature soon!");
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await handleLogin(email, password); // Call the login handler from the custom hook
-  };
 
+    // Basic validation
+    if (!email || !password) {
+      toast.error("Both email and password are required.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    try {
+      await handleLogin(email, password);
+     } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
+    }
+  };
 
   return (
     <>
@@ -30,7 +53,7 @@ const LoginPage: React.FC = () => {
         initial="initial"
         animate="animate"
         exit="exit"
-       >
+      >
         <div className="AuthenticationPage-Background">
           <div className="login-account">
             <h1>Welcome Back!</h1>
@@ -108,10 +131,7 @@ const LoginPage: React.FC = () => {
 
             <div className="login-thru-socials">
               <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "#f7f7f7",
-                 }}
+                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
                 whileTap={{ scale: 0.9 }}
                 onClick={notifyNextFeature}
               >
@@ -119,10 +139,7 @@ const LoginPage: React.FC = () => {
               </motion.button>
 
               <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "#f7f7f7",
-                  }}
+                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
                 whileTap={{ scale: 0.9 }}
                 onClick={notifyNextFeature}
               >
@@ -130,17 +147,13 @@ const LoginPage: React.FC = () => {
               </motion.button>
 
               <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "#f7f7f7",
-                 }}
+                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
                 whileTap={{ scale: 0.9 }}
                 onClick={notifyNextFeature}
               >
                 <Icon icon="uil:facebook" /> <p>Facebook</p>
               </motion.button>
             </div>
-
 
             <div className="form-footer">
               <p className="sign-in-link">
@@ -152,7 +165,7 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <ToastContainer theme="dark" position="top-center" autoClose={2300} />
+        <ToastContainer theme="dark" position="top-center" autoClose={3000} />
       </motion.div>
     </>
   );

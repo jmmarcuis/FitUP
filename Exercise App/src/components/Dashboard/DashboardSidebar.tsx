@@ -13,8 +13,8 @@ const DashboardSidebar: React.FC = () => {
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
- 
-    navigate("/login"); // Redirect to the login page after logout
+    localStorage.removeItem('token');
+    navigate("/login"); 
   };
 
   return (

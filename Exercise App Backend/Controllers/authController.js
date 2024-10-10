@@ -2,6 +2,7 @@ const Client = require("../Models/ClientModel");
 const jwt = require("jsonwebtoken");
 const { generateOTP, sendOTPEmail } = require("../Utilities/emailUtilities");
 const bcrypt = require("bcryptjs");
+const axios = require("axios");  
 
 exports.register = async (req, res) => {
   try {
@@ -14,7 +15,22 @@ exports.register = async (req, res) => {
       height,
       weight,
       gender,
+      captchaToken
     } = req.body;
+
+    // CAPTCHA verification
+    if (!captchaToken) {
+      return res.status(400).json({ message: "CAPTCHA is required" });
+    }
+
+    // Verify CAPTCHA using Google reCAPTCHA API
+    const captchaVerificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${captchaToken}`;
+    
+    const captchaResponse = await axios.post(captchaVerificationUrl);
+    
+    if (!captchaResponse.data.success) {
+      return res.status(400).json({ message: "CAPTCHA verification failed" });
+    }
 
     // Input validation
     if (!firstName || !lastName || !email || !password) {
@@ -244,25 +260,38 @@ exports.login = async (req, res) => {
 
 exports.verifyToken = async (req, res) => {
   try {
+    // Extract token from the Authorization header
     const token = req.headers.authorization?.split(' ')[1];
 
+    // Check if the token is provided
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
     }
 
+    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Find the client associated with the token
     const client = await Client.findById(decoded.id).select('-password');
 
+    // Check if the client exists
     if (!client) {
       return res.status(404).json({ message: 'Client not found' });
     }
 
+    // Respond with success and client information
     res.status(200).json({ message: 'Token is valid', client });
   } catch (error) {
     console.error('Token verification error:', error);
+
+    // Handle specific JWT errors
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({ message: 'Invalid token' });
+    } else if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: 'Token has expired' });
     }
+
+    // Handle other errors
     res.status(500).json({ message: 'Error verifying token' });
   }
 };
