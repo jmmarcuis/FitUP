@@ -10,6 +10,7 @@ const connectDB = require('./Config/dbConfig');
 const { cloudinary, checkCloudinaryConfig } = require('./Config/cloudinaryConfig');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
 const authRoutes = require('./Routes/authRoutes');
+const clientRoutes = require('./Routes/clientRoutes')
 const workoutRoutes = require('./Routes/workoutRoutes');
 const cloudinaryRoutes = require('./Routes/cloudinaryRoutes');
 const app = express();
@@ -29,7 +30,9 @@ app.use(fileUpload({
 app.use(cors());
 app.use(express.json());
 
+
 // Apply verifyToken middleware only to routes that require authentication
+app.use('/client', verifyToken, clientRoutes);
 // app.use('/exercise', verifyToken, exerciseRoutes);
 // app.use('/workout', verifyToken, workoutRoutes);
 

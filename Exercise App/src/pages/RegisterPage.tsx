@@ -147,8 +147,9 @@ const RegisterPage: React.FC = () => {
       toast.error("Please verify the reCAPTCHA!");
       return;
     }
-    // Proceed with form submission if reCAPTCHA is valid
-    toast.success("DEBUG!!!! Form submission successful!");
+    
+    // // Proceed with form submission if reCAPTCHA is valid
+    // toast.success("DEBUG!!!! Form submission successful!");
 
     setIsButtonDisabled(true);
     setIsLoading(true);
