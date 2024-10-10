@@ -1,0 +1,58 @@
+.coach-card {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  width: 300px;
+  height: 300px;
+  user-select: none;
+
+  .image-container {
+    border-radius: 10%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .coach-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+    color: #fff;
+    background: linear-gradient(
+      to right,
+      rgb(56, 56, 56, 1) 0%,
+      rgba(56, 56, 56, 0.1) 50%
+    ); // the left side gradient
+
+    h4 {
+      margin: 5px 0 0 10px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 5px 0 0 10px;
+      font-size: 0.9rem;
+      color: #ffffff;
+    }
+  }
+}

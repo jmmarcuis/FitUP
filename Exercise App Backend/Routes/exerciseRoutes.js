@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const exerciseController = require('../controllers/exerciseController');
-const { protect } = require('../Middleware/authMiddleware');
 
-// Apply protection to all routes
-router.use(protect);
-
+//JOB: COACHES SHOULD ONLY HAVE THIS
 // Search for specific exercise
 router.get('/search', exerciseController.searchExercise);
 

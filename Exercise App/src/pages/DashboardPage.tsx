@@ -1,38 +1,36 @@
 // DashboardPage.tsx
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useViewport } from '../Context/ResponsiveContext';
-import MobileDashboard from '../components/Dashboard/MobileDashboard';
-  import DashboardSidebar from '../components/Dashboard/DashboardSidebar';
-import DashboardRightSidebar from '../components/Dashboard/DashboardRightSidebar';
-import "./DashboardPage.scss"
-import { motion } from 'framer-motion';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useViewport } from "../Context/ResponsiveContext";
+import MobileDashboard from "../components/Dashboard/MobileDashboard";
+import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
+import DashboardRightSidebar from "../components/Dashboard/DashboardRightSidebar";
+import "./DashboardPage.scss";
+import { motion } from "framer-motion";
 
-import DashboardHome from '../components/Dashboard/DashboardHome';
-import Workouts from '../components/Dashboard/Workouts';
-import Progress from '../components/Dashboard/Progress';
-import Nutrition from '../components/Dashboard/Nutrition';
-import Settings from '../components/Dashboard/Settings';
-import Messages from '../components/Dashboard/Messages';
+import DashboardHome from "../components/Dashboard/DashboardHome";
+import Workouts from "../components/Dashboard/Workouts";
+import Settings from "../components/Dashboard/Settings";
+import Messages from "../components/Dashboard/Messages";
 
 const DashboardPage: React.FC = () => {
   const { isMobile } = useViewport();
 
   const pageTransition = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
+    initial: { y: 20 },
+    animate: { y: 0 },
+    exit: { y: -20 },
   };
 
   return (
     <motion.div
-      className={`dashboard-container ${isMobile ? 'mobile' : ''}`}
+      className={`dashboard-container ${isMobile ? "mobile" : ""}`}
       initial="initial"
       animate="animate"
       exit="exit"
       variants={pageTransition}
     >
-       <div className="dashboard-content">
+      <div className="dashboard-content">
         {!isMobile && <DashboardSidebar />}
         <main>
           {isMobile ? (
@@ -41,8 +39,6 @@ const DashboardPage: React.FC = () => {
             <Routes>
               <Route path="/" element={<DashboardHome />} />
               <Route path="workouts" element={<Workouts />} />
-              <Route path="progress" element={<Progress />} />
-              <Route path="nutrition" element={<Nutrition />} />
               <Route path="settings" element={<Settings />} />
               <Route path="messages" element={<Messages />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />

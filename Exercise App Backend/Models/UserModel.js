@@ -17,16 +17,6 @@ const UserSchema = new Schema({
   isProfileCompleted: { type: Boolean, default: false },
 });
 
-// Middleware to handle conversions before saving
-UserSchema.pre('save', function(next) {
-  if (this.isModified('heightInInches')) {
-    this.height = inchesToCentimeters(this.heightInInches);
-  }
-  if (this.isModified('weightInPounds')) {
-    this.weight = poundsToKilograms(this.weightInPounds);
-  }
-  next(); 
-});
 
 // Hash the password before saving the user model
 UserSchema.pre('save', async function(next) {
