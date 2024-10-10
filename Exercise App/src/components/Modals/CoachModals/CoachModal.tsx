@@ -1,5 +1,5 @@
 import React from "react";
-import CoachCard from "../Cards/CoachCard";
+import CoachCard from "../../Cards/CoachCards/CoachCard";
 import { Icon } from "@iconify/react";
 import "./CoachModal.scss";
 
@@ -10,16 +10,20 @@ interface Coach {
 }
 
 interface CoachModalProps {
+  isOpen: boolean;
   coach: Coach[];
   onClose: () => void;
   onSelectTrainer: (trainer: Coach) => void;
 }
 
 const CoachModal: React.FC<CoachModalProps> = ({
+  isOpen,
   coach,
   onClose,
   onSelectTrainer,
 }) => {
+  if (!isOpen) return null; // will not render if not open
+
   return (
     <div className="modal-overlay">
       <div className="modal">

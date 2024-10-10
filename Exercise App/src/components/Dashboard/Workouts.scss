@@ -1,76 +1,45 @@
-$primary-color: #fff5ea;
-$secondary-color: #0c0c0c;
-$text-color: #2f2f2f;
-$background-color: #f7f7f7;
-$background-color-v2: transparent;
-$button-background: #4a90e2;
-$button-hover-background: #357ab7;
-$button-text-color: #ffffff;
+main {
+  background-color: #1f1f1f;
+  height: 100vh;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+}
 
 .workouts-container {
   padding: 20px;
-  background-color: #fafafa;
+  background-color: #1f1f1f;
   height: 100%;
+  color: #ffffff;
 
-  .workout-flex-container {
+  .workout-flex {
+    padding: 20px 3%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .greeting-container {
-      flex: 1;
-
-      h1 {
-        font-size: 24px;
-        color: #333;
-        margin: 0;
-      }
-    }
-
-    .right-elements {
-      display: flex;
-      align-items: center;
-      gap: 20px; // Adjust this value to control spacing between SearchBar and Notification
-    }
-  }
-
-  .welcome-back {
-    font-size: 32px;
-    font-weight: bold;
-    color: #1a1a1a;
-    margin-bottom: 30px;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    overflow: hidden;
+    padding-bottom: 110vh;
   }
 }
 
-.workout-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.start-workout-btn {
+  background-color: transparent;
+  border: 2px solid #bbf246;
+  color: #ffffff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s, color 0.3s;
 
-
-  .workout-buttons {
-    margin-top: 40px;
-    display: flex;
-    gap: 15px;
-
-    button {
-      background-color: transparent;
-      color: $text-color;
-      border: $text-color 2px solid;
-      border-radius: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
- 
- 
-
-      &.icon-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-      }
-    }
+  &:hover {
+    background-color: #bbf246;
+    color: #1f1f1f;
   }
 }
+
+

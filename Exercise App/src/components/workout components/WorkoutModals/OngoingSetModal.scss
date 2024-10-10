@@ -1,0 +1,64 @@
+  .ongoing-set-modal {
+    background: #1c1e21;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1001;
+    padding: 8vh;
+    width: 80%;
+    height: auto;
+    max-width: 500px;
+    max-height: 80%;
+
+    p {
+      font-size: 50px;
+      text-align: left;
+      font-weight: 700;
+    }
+  
+    button {
+      display: block;
+      font-weight: 600;
+      background-color: #BBF246;
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 70%;
+      align-self: center;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 5px rgba(0, 0, 0, 1);
+
+        &:hover {
+            background-color: #97c93b; 
+            color: #000;
+        }
+    }
+  
+    
+    button:first-child {
+      color: #000;
+    }
+  
+    button:nth-child(2) {
+      color: #000;
+    }
+  
+    button:last-child {
+      background-color: #555;
+      color: #fff;
+
+      &:hover {
+        background-color: #383838; 
+        color: #ffffff;
+    }
+    }
+
+  }
+  
+  

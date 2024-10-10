@@ -1,5 +1,98 @@
- 
-       .iconify {
-            font-size: 24px;
-          }
- 
+body{
+  overflow: hidden;
+}
+
+.notifications {
+  background-color: #000000;
+  padding: 2rem;
+  width: 350px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  right: -400px; // Start off-screen
+  top: 0;
+  z-index: 1000;
+  transition: right 0.4s ease-in-out; // Smooth sliding effect
+  overflow: hidden;
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  &.active {
+    right: 0; // Slide into view when active
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 0px;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    border: 0;
+    justify-content: flex-start;
+
+    .back-button {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      margin-right: 10%;
+      font-size: 24px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0;
+    }
+  }
+
+  .notification-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .notification-card {
+      background-color: #1c1e21;
+      display: flex;
+      padding: 1rem;
+      border-radius: 10px;
+      align-items: center;
+
+      .notification-image {
+        border-radius: 10%;
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+
+      .notification-content {
+        flex: 1;
+
+        h4 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #ffffff;
+          margin: 0;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: #b8b8b8;
+          margin: 0;
+        }
+
+        .notification-date {
+          font-size: 0.8rem;
+          color: #b8b8b8;
+          font-weight: 100;
+        }
+      }
+    }
+  }
+}

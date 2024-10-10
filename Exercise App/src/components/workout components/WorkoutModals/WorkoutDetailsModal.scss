@@ -1,0 +1,111 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal-visible {
+    opacity: 1;
+  }
+  
+  .modal-visible .workout-modal {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .workout-modal {
+    background: #1c1e21;
+    width: 90%;
+    max-width: 600px;
+    height: auto; 
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1001;
+  
+    .back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #ffffff;
+      z-index: 2;
+    }
+  
+    .image-container {
+      width: 100%;
+      height: auto;
+      overflow: hidden;
+    }
+  
+    .workout-image {
+      width: 100%;
+      height: auto; 
+      max-height: 40vh;
+      object-fit: cover;
+      display: block;
+    }
+  
+    .workout-info {
+      padding: 20px; 
+      text-align: center;
+  
+      h4 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+  
+      p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+  
+      .collaborate-button {
+        margin: 0.7rem;
+        background-color: #bbf246;
+        border: none;
+        padding: 10px 20px;
+        color: #000000;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+  
+        &:hover {
+          background-color: #a0d63f;
+        }
+      }
+    }
+  }
+  
+  /* Media Queries for smaller screens */
+  @media (max-width: 768px) {
+    .workout-modal {
+      width: 95%;
+    }
+  
+    .workout-info {
+      padding: 15px;
+    }
+  
+    .workout-image {
+      max-height: 30vh;
+    }
+  }
+  

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import './ToggleLightDarkSwitch.scss';
 
 const ToggleLightDarkSwitch = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const handleToggle = () => {
     setIsDarkMode(!isDarkMode);

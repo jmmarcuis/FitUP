@@ -1,0 +1,162 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resttimer-modal {
+  background: #1c1e21;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1001;
+  padding: 5vh;
+  width: 80%;
+  max-width: 500px;
+  max-height: 70%;
+  text-align: center;
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  p {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+  }
+
+  .timer-display {
+    font-size: 4rem;
+    margin-bottom: 30px;
+  }
+
+  .timer-input {
+    font-size: 6rem;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 550;
+    font-family: sans-serif;
+    transition: background-color 0.3s, border-bottom 0.3s;
+
+    // Default editable style
+    color: #ffffff;
+    background-color: rgba(187, 242, 70, 0.1);
+
+    &.not-editable {
+      color: #bbf246;
+      background-color: transparent;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    .pauseplay {
+      color: white;
+      background-color: transparent;
+      font-size: 50px;
+      width: 65px;
+      height: 65px;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background-color: #97c93b;
+      }
+    }
+  }
+
+  .skip {
+    background-color: #bbf246;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    box-shadow: 0 10px 5px rgba(0, 0, 0, 1);
+    margin-top: 1rem;
+
+    &:hover {
+      background-color: #97c93b;
+      color: #000;
+    }
+  }
+
+  .edit-indicator {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #ffffff;
+
+    &.editable {
+      color: #bbf246;
+      font-weight: bold;
+    }
+
+    &.not-editable {
+      color: #da2b2b;
+      font-weight: normal;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .resttimer-modal {
+    padding: 5vh;
+    width: 90%;
+
+    h2 {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+
+    .timer-display {
+      font-size: 1rem;
+
+      .timer-input {
+        font-size: 1rem;
+      }
+    }
+
+    .skip {
+      font-size: 1.2rem;
+    }
+
+    .edit-indicator {
+      font-size: 14px;
+    }
+
+    .pauseplay {
+      font-size: 40px;
+    }
+  }
+}

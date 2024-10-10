@@ -1,44 +1,14 @@
 import React, { useState, useRef } from "react";
-import { Icon } from "@iconify/react";
-import CoachCard from "../Cards/CoachCard";
-import CoachModal from "../Modals/CoachModal";
-import TrainerDetailsModal from "../Modals/CoachDetailsModal";
+import CoachCard from "../Cards/CoachCards/CoachCard";
+import WorkoutCardDB from "../Cards/DashboardWorkout/WorkoutCardDB";
+import CoachModal from "../Modals/CoachModals/CoachModal";
+import TrainerDetailsModal from "../Modals/CoachModals/CoachDetailsModal";
+import DashboardHeader from "./DashboardHeader";
 import { getGreeting } from "../Utilities/Greeting";
+import mockCoaches from "../../mocks/mockCoaches";
+import mockWorkouts from "../../mocks/mockWorkouts";
 import "./DashboardHome.scss";
-
-import coach1 from "../../assets/TrainerImages/coach-1.jpg";
-import coach2 from "../../assets/TrainerImages/coach-2.jpg";
-import coach3 from "../../assets/TrainerImages/coach-3.jpg";
-import coach4 from "../../assets/TrainerImages/coach-4.jpg";
-import coach5 from "../../assets/TrainerImages/coach-5.jpg";
-
-// Coach data
-const coaches = [
-  { image: coach1, name: "Melissa Alcantara", title: "Yoga Instructor" },
-  { image: coach2, name: "Jono Castano", title: "HIIT Instructor" },
-  { image: coach3, name: "Michael Sandor", title: "Powerlifting Instructor" },
-  { image: coach4, name: "Brooke Bark", title: "Yoga Instructor" },
-  { image: coach5, name: "Samson Dickenson", title: "Bodybuilding Instructor" },
-  { image: coach2, name: "Jono Castano", title: "HIIT Instructor" },
-  { image: coach3, name: "Michael Sandor", title: "Powerlifting Instructor" },
-  { image: coach4, name: "Brooke Bark", title: "Yoga Instructor" },
-  { image: coach5, name: "Samson Dickenson", title: "Bodybuilding Instructor" },
-];
-
-// Header Component
-const Header: React.FC<{ greeting: string }> = ({ greeting }) => (
-  <header className="dashboard-header">
-    <div className="greeting">
-      <h2>{greeting}</h2>
-      <p>Current Workout for Today</p>
-    </div>
-    <div className="header-icons">
-      <Icon icon="mdi:moon-waning-crescent" className="header-icon" />
-      <Icon icon="mdi:bell" className="header-icon" />
-      <Icon icon="mdi:plus" className="header-icon" />
-    </div>
-  </header>
-);
+import benchpressImage from "../../assets/WorkoutImages/benchpress.jpeg";
 
 // Coach Section Component
 const CoachSection: React.FC<{
@@ -52,6 +22,7 @@ const CoachSection: React.FC<{
 }> = ({ coaches, onShowModal, onSelectTrainer }) => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
+  // horizontal scrolling when u click and drag coach images left to right
   const handleMouseDown = (event: React.MouseEvent) => {
     if (!sliderRef.current) return;
 
@@ -109,34 +80,58 @@ const DashboardHome: React.FC = () => {
     title: string;
   } | null>(null);
 
+  // header data
   const greetingMessage = getGreeting();
+  const welcomeMessage = "Current Workout for Today";
+  const handleShowModal = () => {
+    setShowTrainersModal(true);
+  };
 
   return (
     <div className="dashboard-home-container">
-      <Header greeting={greetingMessage} />
-
-      <CoachSection
-        coaches={coaches}
-        onShowModal={() => setShowTrainersModal(true)}
-        onSelectTrainer={setSelectedTrainer}
+      <DashboardHeader
+        greeting={greetingMessage}
+        onShowModal={handleShowModal}
+        welcomeMessage={welcomeMessage}
       />
+      <div className="dashboard-contents">
+        <div className="workout-list">
+          {mockWorkouts.map((workout) => (
+            <WorkoutCardDB
+              key={workout._id}
+              title={workout.title}
+              clientName={workout.coachName}
+              date={new Date(workout.date).toLocaleDateString()}
+              image={benchpressImage}
+            />
+          ))}
+        </div>
 
-      {showTrainersModal && (
-        <CoachModal
-          coach={coaches}
-          onClose={() => setShowTrainersModal(false)}
+        <CoachSection
+          coaches={mockCoaches}
+          onShowModal={() => setShowTrainersModal(true)}
           onSelectTrainer={setSelectedTrainer}
         />
-      )}
 
-      {selectedTrainer && (
-        <TrainerDetailsModal
-          image={selectedTrainer.image}
-          name={selectedTrainer.name}
-          description={`${selectedTrainer.name} is a professional ${selectedTrainer.title} with years of experience. Let's collaborate to reach your goals!`}
-          onClose={() => setSelectedTrainer(null)}
-        />
-      )}
+        {showTrainersModal && (
+          <CoachModal
+            isOpen={showTrainersModal}
+            onClose={() => setShowTrainersModal(false)}
+            coach={mockCoaches}
+            onSelectTrainer={setSelectedTrainer}
+          />
+        )}
+
+        {selectedTrainer && (
+          <TrainerDetailsModal
+            image={selectedTrainer.image}
+            name={selectedTrainer.name}
+            description={`${selectedTrainer.name} is a professional ${selectedTrainer.title} with years of experience. Let's collaborate to reach your goals!`}
+            onClose={() => setSelectedTrainer(null)}
+            showCollaborateButton={true}
+          />
+        )}
+      </div>
     </div>
   );
 };

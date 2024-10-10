@@ -1,6 +1,6 @@
 // DashboardPage.tsx
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useViewport } from '../Context/ResponsiveContext';
 import MobileDashboard from '../components/Dashboard/MobileDashboard';
   import DashboardSidebar from '../components/Dashboard/DashboardSidebar';
@@ -15,12 +15,16 @@ import Messages from '../components/Dashboard/Messages';
 
 const DashboardPage: React.FC = () => {
   const { isMobile } = useViewport();
+  const location = useLocation();
 
   const pageTransition = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
   };
+
+  // paths where the right sidebar should not be shown
+  const noSidebarPaths = ['/dashboard/settings'];
 
   return (
     <motion.div
@@ -45,7 +49,8 @@ const DashboardPage: React.FC = () => {
             </Routes>
           )}
         </main>
-        {!isMobile && <DashboardRightSidebar />}
+         {/* Conditionally render the right sidebar */}
+         {!isMobile && !noSidebarPaths.includes(location.pathname) && <DashboardRightSidebar />}
       </div>
     </motion.div>
   );
