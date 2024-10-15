@@ -42,7 +42,7 @@ const DashboardSidebar: React.FC = () => {
           </li>
           <li>
             <div className="dashboard-link-flex">
-              <Link to="/dashboard">
+              <Link to="/dashboard/clients">
                 <a
                   href="#client"
                   className={activeItem === "client" ? "active" : ""}

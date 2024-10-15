@@ -1,0 +1,46 @@
+$background-color: #1c1e21;
+$secondary-color: #fff;
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$accent-color: #bbf246;
+$error-color: #ff6b6b;
+$button-bg: #bbf246;
+$button-hover-bg: #99d037;
+
+.client-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem;
+  background-color: $background-color;
+  color: #ffffff;
+  margin: 0;
+
+  .client-button-flex {
+    display: flex;
+    gap: 10px;
+  }
+
+ 
+
+  button {
+    padding: 10px 22px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background-color: $button-bg;
+    color: $primary-color;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+margin-bottom: 20px;
+    &:hover {
+      background-color: $button-hover-bg;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 5px rgba(187, 242, 70, 0.5);
+    }
+  }
+}

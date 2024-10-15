@@ -218,7 +218,7 @@ exports.getActiveClients = async (req, res) => {
     const activeCollaborations = await Collaboration.find({
       coach: coachId,
       status: "active",
-    }).populate("client", "firstName lastName email profilePicture");
+    }).populate("client", "firstName lastName email clientImage");
 
     if (activeCollaborations.length === 0) {
       return res
@@ -232,7 +232,7 @@ exports.getActiveClients = async (req, res) => {
       firstName: collab.client.firstName,
       lastName: collab.client.lastName,
       email: collab.client.email,
-      profilePicture: collab.client.profilePicture,
+      clientImage: collab.client.clientImage,
       startDate: collab.startDate,
     }));
 
@@ -264,7 +264,7 @@ exports.getPendingRequests = async (req, res) => {
     const pendingRequests = await Collaboration.find({
       coach: coachId,
       status: "pending",
-    }).populate("client", "firstName lastName email");
+    }).populate("client", "firstName lastName email clientImage");
 
     console.log("Pending requests found:", pendingRequests.length);
 
