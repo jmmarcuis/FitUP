@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import "./DashboardSidebar.scss";
 import useCoachDetails from "../../hooks/useCoachDetails";
+import { BarLoader } from "react-spinners";
 
 const DashboardSidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -19,10 +20,6 @@ const DashboardSidebar: React.FC = () => {
   };
 
   const { coachDetails, loading, error } = useCoachDetails();
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!coachDetails) return null;
 
   return (
     <aside className="dashboard-sidebar">
@@ -51,7 +48,7 @@ const DashboardSidebar: React.FC = () => {
                   className={activeItem === "client" ? "active" : ""}
                   onClick={() => handleItemClick("client")}
                 >
-                  <Icon icon="ic:baseline-people" /> 
+                  <Icon icon="ic:baseline-people" />
                 </a>
               </Link>
               <h3>Clients</h3>
@@ -102,24 +99,35 @@ const DashboardSidebar: React.FC = () => {
           </li>
 
           <li>
-            <div className="dashboard-link-flex">
-              <div className="coach-info-flex">
-                <img
-                  src={coachDetails.profilePicture}
-                  alt={`${coachDetails.firstName} ${coachDetails.lastName}`}
-                />
-                <div className="coach-info">
-                  <h4>
-                    {coachDetails.firstName} {coachDetails.lastName}
-                  </h4>
-                  <p>{coachDetails.coachSpecialization}</p>
-                  <p>{coachDetails.email}</p>
-                </div>
+            {loading ? (
+              <BarLoader color="#ffffff" loading={true} width={300} />
+            ) : error || !coachDetails ? ( // Check if coachDetails is null
+              <div className="error-message">
+                Failed to load Coach details.
+                <button onClick={handleLogout}>
+                  <Icon icon="mdi:logout" />
+                </button>
               </div>
-              <button onClick={handleLogout}>
-                <Icon icon="mdi:logout" />
-              </button>
-            </div>
+            ) : (
+              <div className="dashboard-link-flex">
+                <div className="coach-info-flex">
+                  <img
+                    src={coachDetails.profilePicture}
+                    alt={`${coachDetails.firstName} ${coachDetails.lastName}`}
+                  />
+                  <div className="coach-info">
+                    <h4>
+                      {coachDetails.firstName} {coachDetails.lastName}
+                    </h4>
+                    <p>{coachDetails.coachSpecialization}</p>
+                    <p>{coachDetails.email}</p>
+                  </div>
+                </div>
+                <button onClick={handleLogout}>
+                  <Icon icon="mdi:logout" />
+                </button>
+              </div>
+            )}
           </li>
         </ul>
       </nav>

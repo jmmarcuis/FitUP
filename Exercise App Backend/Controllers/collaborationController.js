@@ -33,18 +33,47 @@ exports.requestCollaboration = async (req, res) => {
       $push: { collaborations: collaboration._id },
     });
 
+    // Fetch coach and client details
+    const coach = await Coach.findById(coachId);
+    const client = await Client.findById(clientId);
+
+    if (!coach || !client) {
+      return res.status(404).json({
+        message: "Coach or client not found",
+      });
+    }
+
+    // Send email to coach
+    await transporter.sendMail({
+      from: "PowerSync",
+      to: coach.email,
+      subject: "New Collaboration Request",
+      text: `Dear ${coach.firstName},
+
+A new collaboration request has been received from ${client.firstName} ${client.lastName}.
+
+Client Details:
+- Name: ${client.firstName} ${client.lastName}
+- Email: ${client.email}
+
+Please log in to your account to review and respond to this request.
+
+Best regards,
+PowerSync Team`,
+    });
+
     res.status(201).json({
       message: "Collaboration request sent successfully",
       collaboration,
     });
   } catch (error) {
+    console.error("Error in requestCollaboration:", error);
     res.status(500).json({
       message: "Error creating collaboration request",
       error: error.message,
     });
   }
 };
-
 exports.respondToCollaboration = async (req, res) => {
   try {
     const { id } = req.params;
@@ -86,20 +115,20 @@ exports.respondToCollaboration = async (req, res) => {
 
       // Send acceptance email to client
       await transporter.sendMail({
-        from: process.env.EMAIL_USERNAME,
+        from: "PowerSync",
         to: collaboration.client.email,
         subject: "Collaboration Request Accepted",
-        text: `Dear ${collaboration.client.firstName},\n\nYour collaboration request has been accepted by the coach. You can now start working together.\n\nBest regards,\nYour App Team`,
+        text: `Dear ${collaboration.client.firstName},\n\nYour collaboration request has been accepted by the coach. You can now start working together.\n\nBest regards,\n"PowerSync"`,
       });
     } else if (response === "decline") {
       collaboration.status = "declined";
 
       // Send rejection email to client
       await transporter.sendMail({
-        from: process.env.EMAIL_USERNAME,
+        from: "PowerSync",
         to: collaboration.client.email,
         subject: "Collaboration Request Declined",
-        text: `Dear ${collaboration.client.firstName},\n\nWe regret to inform you that your collaboration request has been declined by the coach.\n\nBest regards,\nYour App Team`,
+        text: `Dear ${collaboration.client.firstName},\n\nWe regret to inform you that your collaboration request has been declined by the coach.\n\nBest regards,\n"PowerSync"`,
       });
 
       // Remove the collaboration from the client's list
@@ -114,20 +143,16 @@ exports.respondToCollaboration = async (req, res) => {
 
     await collaboration.save();
 
-    res
-      .status(200)
-      .json({
-        message: `Collaboration ${collaboration.status}`,
-        collaboration,
-      });
+    res.status(200).json({
+      message: `Collaboration ${collaboration.status}`,
+      collaboration,
+    });
   } catch (error) {
     console.error("Error in respondToCollaboration:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error responding to collaboration",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error responding to collaboration",
+      error: error.message,
+    });
   }
 };
 
@@ -259,11 +284,9 @@ exports.getPendingRequests = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getPendingRequests:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching pending requests",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error fetching pending requests",
+      error: error.message,
+    });
   }
 };

@@ -28,7 +28,7 @@ const useClientDetails = () => {
 
       const response = await axios.get<ClientDetails>('http://localhost:5000/client/details', {
         headers: {
-          Authorization: `Bearer ${token}` // Properly using backticks here
+          Authorization: `Bearer ${token}`
         }
       });
 

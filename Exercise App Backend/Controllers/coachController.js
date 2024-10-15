@@ -83,13 +83,14 @@ exports.loginCoach = async (req, res) => {
 };
 
 // Get coach profile
+// Get coach profile
 exports.getCoachInfo = async (req, res) => {
   try {
     // The user ID is available from the decoded token
-    const coachId = req.user.id;
+    const coachId = req.user._id; // Use _id from req.user
 
     // Find the coach by ID, excluding the password field
-    const coach = await Coach.findById(coachId).select('-password');
+    const coach = await Coach.findById(coachId).select('-password -otp -otpExpires'); // Optionally exclude any other sensitive fields
 
     if (!coach) {
       return res.status(404).json({ message: 'Coach not found' });
@@ -115,7 +116,10 @@ exports.getCoachInfo = async (req, res) => {
   }
 };
 
+
 //Get All Coaches
+
+
 exports.getAllCoaches = async (req, res) => {
   try {
     const coaches = await Coach.find({}, '-password');

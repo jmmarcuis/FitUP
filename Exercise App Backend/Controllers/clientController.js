@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 
 exports.updateClientDetails = async (req, res) => {
   try {
-    const clientId = req.user.id; // Assuming req.user is set by your verifyToken middleware
+    const clientId = req.user._id; // Assuming req.user is set by your verifyToken middleware
     const updates = req.body;
     const allowedUpdates = ['firstName', 'lastName', 'dateOfBirth', 'height', 'weight'];
     
@@ -93,7 +93,7 @@ exports.getClientDetails = async (req, res) => {
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const clientId = req.user.id; // Assuming req.user is set by your auth middleware
+    const clientId = req.user._id; 
 
     // Find the client
     const client = await Client.findById(clientId);

@@ -11,37 +11,80 @@
   z-index: 100;
 }
 
-.modal {
+.coachlist-modal {
   background: #1c1e21;
-  width: 80%;
-  height: 85%;
   overflow-y: auto;
   position: relative;
-  padding: 30px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   .modal-header {
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     .back-button {
       background: none;
       border: none;
-      font-size: 18px;
+      font-size: 24px;
       cursor: pointer;
       color: #fff;
-      margin-right: 20px;
+      margin-right: 15px;
+      padding: 5px;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #007bff;
+      }
     }
 
     h2 {
       color: #fff;
       margin: 0;
+      font-size: 24px;
     }
   }
 
   .coach-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); 
     gap: 20px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .coachlist-modal {
+    width: 95%;
+    height: 95%;
+    padding: 15px;
+
+    .modal-header {
+      margin-bottom: 15px;
+
+      .back-button {
+        font-size: 20px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .coach-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 20px;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .coachlist-modal {
+    .coach-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

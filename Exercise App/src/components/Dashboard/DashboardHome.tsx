@@ -1,144 +1,121 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import CoachCard from "../Cards/CoachCard";
-import CoachModal from "../Modals/CoachModal";
-import TrainerDetailsModal from "../Modals/CoachDetailsModal";
 import { getGreeting } from "../Utilities/Greeting";
 import "./DashboardHome.scss";
+import CoachCard from "../Cards/CoachCard";
+import CoachDetailsModal from "../Modals/CoachDetailsModal";
+import { ToastContainer, toast } from "react-toastify";
+import CoachModal from "../Modals/CoachModal";
+import ToggleLightDarkSwitch from "../common/ToggleLightDarkSwitch";
+import useGetCoaches from "../../hooks/useGetCoaches";
+import useCollaboration from "../../hooks/useCollaboration";
+import { Coach } from "../../interfaces/Coach";
+import { BarLoader } from "react-spinners";
 
-import coach1 from "../../assets/TrainerImages/coach-1.jpg";
-import coach2 from "../../assets/TrainerImages/coach-2.jpg";
-import coach3 from "../../assets/TrainerImages/coach-3.jpg";
-import coach4 from "../../assets/TrainerImages/coach-4.jpg";
-import coach5 from "../../assets/TrainerImages/coach-5.jpg";
+const DashboardHome: React.FC = () => {
+  const greeting = getGreeting();
+  const { coaches, loading, error } = useGetCoaches();
+  const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+  const { requestCollaboration, loading: collaborationLoading, error: collaborationError } = useCollaboration();
+  const [isCoachDetailsModalOpen, setIsCoachDetailsModalOpen] = useState(false);
+  const [isCoachListModalOpen, setIsCoachListModalOpen] = useState(false);
 
-// Coach data
-const coaches = [
-  { image: coach1, name: "Melissa Alcantara", title: "Yoga Instructor" },
-  { image: coach2, name: "Jono Castano", title: "HIIT Instructor" },
-  { image: coach3, name: "Michael Sandor", title: "Powerlifting Instructor" },
-  { image: coach4, name: "Brooke Bark", title: "Yoga Instructor" },
-  { image: coach5, name: "Samson Dickenson", title: "Bodybuilding Instructor" },
-  { image: coach2, name: "Jono Castano", title: "HIIT Instructor" },
-  { image: coach3, name: "Michael Sandor", title: "Powerlifting Instructor" },
-  { image: coach4, name: "Brooke Bark", title: "Yoga Instructor" },
-  { image: coach5, name: "Samson Dickenson", title: "Bodybuilding Instructor" },
-];
-
-// Header Component
-const Header: React.FC<{ greeting: string }> = ({ greeting }) => (
-  <header className="dashboard-header">
-    <div className="greeting">
-      <h2>{greeting}</h2>
-      <p>Current Workout for Today</p>
-    </div>
-    <div className="header-icons">
-      <Icon icon="mdi:moon-waning-crescent" className="header-icon" />
-      <Icon icon="mdi:bell" className="header-icon" />
-      <Icon icon="mdi:plus" className="header-icon" />
-    </div>
-  </header>
-);
-
-// Coach Section Component
-const CoachSection: React.FC<{
-  coaches: Array<{ image: string; name: string; title: string }>;
-  onShowModal: () => void;
-  onSelectTrainer: (trainer: {
-    image: string;
-    name: string;
-    title: string;
-  }) => void;
-}> = ({ coaches, onShowModal, onSelectTrainer }) => {
-  const sliderRef = useRef<HTMLDivElement | null>(null);
-
-  const handleMouseDown = (event: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-
-    const startX = event.pageX - sliderRef.current.offsetLeft;
-    const scrollLeft = sliderRef.current.scrollLeft;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const x = moveEvent.pageX - sliderRef.current!.offsetLeft;
-      const walk = (x - startX) * 4;
-      sliderRef.current!.scrollLeft = scrollLeft - walk;
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+  const handleCoachClick = (coach: Coach) => {
+    setSelectedCoach(coach);
+    setIsCoachDetailsModalOpen(true);
   };
 
-  return (
-    <section className="coach-section">
-      <div className="coach-text">
-        <h3>Not sure what your goals are? Select from our Personal Trainers</h3>
-        <a className="see-more" onClick={onShowModal}>
-          See more &gt;
-        </a>
-      </div>
-      <div
-        className="coach-slider"
-        ref={sliderRef}
-        onMouseDown={handleMouseDown}
-      >
-        {coaches.map((coach, index) => (
-          <CoachCard
-            key={index}
-            image={coach.image}
-            name={coach.name}
-            title={coach.title}
-            onClick={() => onSelectTrainer(coach)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-};
+  const handleCloseCoachDetailsModal = () => {
+    setIsCoachDetailsModalOpen(false);
+    setSelectedCoach(null);
+  };
 
-// Main DashboardHome Component
-const DashboardHome: React.FC = () => {
-  const [showTrainersModal, setShowTrainersModal] = useState(false);
-  const [selectedTrainer, setSelectedTrainer] = useState<{
-    image: string;
-    name: string;
-    title: string;
-  } | null>(null);
+  const handleCollaborate = async (coachId: string) => {
+    try {
+      const clientId = localStorage.getItem('clientId');  
+      if (!clientId) {
+        toast.error("User ID not found. Please log in again.");
+        return;
+      }
+      
+      const response = await requestCollaboration({ clientId, coachId });
+      toast.success(response.message);
+      handleCloseCoachDetailsModal();
+    } catch (err) {
+      if (collaborationError) {
+        toast.error(collaborationError);
+      } else {
+        toast.error("Failed to request collaboration. Please try again.");
+      }
+    }
+  };
+  const handleSeeMoreClick = () => {
+    setIsCoachListModalOpen(true);
+  };
 
-  const greetingMessage = getGreeting();
+  const handleCloseCoachModal = () => {
+    setIsCoachListModalOpen(false);
+  };
+
+  
+  const notifyNextFeature = () => toast.info("This feature is coming soon!");
 
   return (
     <div className="dashboard-home-container">
-      <Header greeting={greetingMessage} />
+      <header className="dashboard-header">
+        <div className="greeting">
+          <h2>{greeting}</h2>
+        </div>
+        <div className="header-icons">
+          <ToggleLightDarkSwitch />
+          <div onClick={notifyNextFeature}>
+            <Icon icon="mdi:bell" className="header-icon" />
+          </div>
+          <Icon icon="mdi:plus" className="header-icon" />
+        </div>
+      </header>
 
-      <CoachSection
-        coaches={coaches}
-        onShowModal={() => setShowTrainersModal(true)}
-        onSelectTrainer={setSelectedTrainer}
+      <section className="coach-section">
+        <div className="coach-text">
+          <h3>
+            Not sure what your goals are? Select from our Personal Trainers
+          </h3>
+          <a className="see-more" onClick={handleSeeMoreClick}>
+            See more &gt;
+          </a>
+        </div>
+        <div className="coach-slider">
+          {loading ? (
+            <BarLoader color="#ffffff" loading={true} width={300} />
+          ) : error ? (
+            <div className="error-message">Failed to load client details.</div>
+          ) : (
+            coaches.slice(0, 3).map((coach) => (
+              <CoachCard
+                key={coach._id}
+                coach={coach}
+                onClick={handleCoachClick}
+                loading={false}
+              />
+            ))
+          )}
+        </div>
+      </section>
+      <CoachDetailsModal
+        isOpen={isCoachDetailsModalOpen}
+        coach={selectedCoach}
+        onClose={handleCloseCoachDetailsModal}
+        onCollaborate={handleCollaborate}
+        collaborationLoading={collaborationLoading}
       />
-
-      {showTrainersModal && (
-        <CoachModal
-          coach={coaches}
-          onClose={() => setShowTrainersModal(false)}
-          onSelectTrainer={setSelectedTrainer}
-        />
-      )}
-
-      {selectedTrainer && (
-        <TrainerDetailsModal
-          image={selectedTrainer.image}
-          name={selectedTrainer.name}
-          description={`${selectedTrainer.name} is a professional ${selectedTrainer.title} with years of experience. Let's collaborate to reach your goals!`}
-          onClose={() => setSelectedTrainer(null)}
-        />
-      )}
+      <CoachModal
+        isOpen={isCoachListModalOpen}
+        coaches={coaches}
+        onClose={handleCloseCoachModal}
+        onCoachClick={handleCoachClick}
+      />
+      <ToastContainer theme="dark" position="top-center" autoClose={3000} />
     </div>
   );
 };
-
 export default DashboardHome;

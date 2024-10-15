@@ -1,44 +1,36 @@
-import React, { useState } from "react";
+import React from "react";
 import "./CoachCard.scss";
-
+import { Coach } from "../../interfaces/Coach";
+import { ClipLoader } from "react-spinners";
 interface CoachCardProps {
-  image: string;
-  name: string;
-  title: string;
-  onClick: () => void;
+  coach: Coach;
+  onClick: (coach: Coach) => void;
+  loading: boolean;
 }
 
-const CoachCard: React.FC<CoachCardProps> = ({
-  image,
-  name,
-  title,
-  onClick,
-}) => {
-  const [isClickEnabled, setIsClickEnabled] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsClickEnabled(false);
-    setTimeout(() => {
-      setIsClickEnabled(true);
-    }, 250); // delay to avoid misclicks
-  };
-
-  const handleClick = () => {
-    if (isClickEnabled) {
-      onClick();
-    }
-  };
-
+const CoachCard: React.FC<CoachCardProps> = ({ coach, onClick, loading }) => {
   return (
-    <div className="coach-card" onMouseEnter={handleMouseEnter} onClick={handleClick}>
-      <div className="image-container">
-        <img src={image} alt={name} className="coach-image" />
-        <div className="overlay">
-          <h4>{name}</h4>
-          <p>{title}</p>
+    <>
+      {loading ? (
+        <div className="loading-container">
+          <ClipLoader color="#ffffff" loading={true} size={50} />
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className="coach-card" onClick={() => onClick(coach)}>
+          <div className="image-container">
+            <img
+              src={coach.profilePicture}
+              alt={`${coach.firstName} ${coach.lastName}`}
+              className="coach-image"
+            />
+            <div className="overlay">
+              <h4>{`${coach.firstName} ${coach.lastName}`}</h4>
+              <p>{coach.coachSpecialization}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
