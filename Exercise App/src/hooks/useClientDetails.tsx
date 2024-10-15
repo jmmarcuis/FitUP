@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 interface ClientDetails {
@@ -18,26 +18,36 @@ const useClientDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchClientDetails = async () => {
-      try {
-        const response = await axios.get<ClientDetails>('http://localhost:5000/client/details', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setClientDetails(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch client details');
-        setLoading(false);
+  const fetchClientDetails = useCallback(async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
       }
-    };
 
-    fetchClientDetails();
+      const response = await axios.get<ClientDetails>('http://localhost:5000/client/details', {
+        headers: {
+          Authorization: `Bearer ${token}` // Properly using backticks here
+        }
+      });
+
+      setClientDetails(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching client details:', err);
+      setError('Failed to fetch client details');
+      setClientDetails(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { clientDetails, loading, error };
+  useEffect(() => {
+    fetchClientDetails();
+  }, [fetchClientDetails]);
+
+  return { clientDetails, loading, error, refetch: fetchClientDetails };
 };
 
 export default useClientDetails;

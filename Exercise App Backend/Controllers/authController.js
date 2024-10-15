@@ -205,20 +205,17 @@ exports.resendOTP = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     // Input validation
     if (!email || !password) {
       return res
         .status(400)
         .json({ message: "Email and password are required" });
     }
-
     // Find the client
     const client = await Client.findOne({ email });
     if (!client) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
     // Check if email is verified
     if (!client.isVerified) {
       return res.status(403).json({
@@ -226,20 +223,17 @@ exports.login = async (req, res) => {
           "Email not verified. Please verify your email before logging in.",
       });
     }
-
     // Check password
     const isMatch = await client.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
     // Generate JWT token
     const token = jwt.sign(
-      { id: client._id, email: client.email },
+      { id: client._id, email: client.email, role: 'client' },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-
     res.status(200).json({
       message: "Login successful",
       token,

@@ -1,0 +1,52 @@
+.request-sent-modal {
+  background: #1c1e21;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1001;
+  padding: 5vh 8vh;
+  width: 80%;
+  height: auto;
+  max-width: 500px;
+  max-height: 90%;
+  text-align: center;
+
+  .emoji {
+    font-size: 7rem;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 3.3rem;
+  }
+
+  p {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  button {
+    display: block;
+    background-color: #bbf246;
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 70%;
+    align-self: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 10px 5px rgba(0, 0, 0, 1);
+
+    &:hover {
+      background-color: #97c93b;
+      color: #000;
+    }
+  }
+}
