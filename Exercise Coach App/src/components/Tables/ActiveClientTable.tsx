@@ -1,6 +1,6 @@
 import React from "react";
 import useActiveClients from "../../hooks/useActiveClients";
-import "./PendingClientTable.scss";
+import "./Tables.scss";
 
 const ActiveClientTable: React.FC = () => {
   const { activeClients, loading, error } = useActiveClients();
@@ -22,6 +22,7 @@ const ActiveClientTable: React.FC = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Start Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -39,6 +40,7 @@ const ActiveClientTable: React.FC = () => {
                     </td>
                     <td>{client.email}</td>
                     <td>{client.startDate}</td>
+                    <td><button className="complete-contract-button">Complete</button></td>
                   </tr>
                 ))}
               </tbody>

@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import usePendingRequests from "../../hooks/usePendingRequest";
 import useCollaborationResponse from "../../hooks/useCollaborationResponse";
 import { ConfirmationModal } from "../Modals/ConfirmationModal";
-import "./PendingClientTable.scss";
+import "./Tables.scss";
 
 ReactModal.setAppElement("#root");
 
