@@ -48,127 +48,120 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <>
-      <motion.div
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <div className="AuthenticationPage-Background">
-          <div className="login-account">
-            <h1>Welcome Back!</h1>
-            <form onSubmit={onSubmit}>
-              <div className="input-group">
-                <label htmlFor="email">Email</label>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="input-with-icon"
-                >
-                  <Icon icon="mdi:alternate-email" />
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </motion.div>
+    <motion.div initial="initial" animate="animate" exit="exit">
+      <div className="AuthenticationPage-Background">
+        <div className="login-account">
+          <h1>Welcome Back!</h1>
+          <form onSubmit={onSubmit}>
+            <div className="input-group">
+              <label htmlFor="email">Email</label>
+              <div
+        
+                className="input-with-icon"
+              >
+                <Icon icon="mdi:alternate-email" className="icon" />
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
+            </div>
 
-              <div className="input-group">
-                <label htmlFor="password">Password</label>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="input-with-icon"
+            <div className="input-group">
+              <label htmlFor="password">Password</label>
+              <div
+    
+                className="input-with-icon"
+              >
+                <Icon icon="mdi:verified-user" className="icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  <Icon icon="mdi:verified-user" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    placeholder="Enter your Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="toggle-password"
-                    onClick={() => setShowPassword(!showPassword)}
+                  <div
+          
                   >
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} />
-                    </motion.div>
-                  </button>
-                </motion.div>
-                <span onClick={notifyNextFeature}>Forgot Password?</span>
+                    <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} />
+                  </div>
+                </button>
               </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.9 }}
-                type="submit"
-                className={`btn-finish ${isButtonDisabled ? "disabled" : ""}`}
-                disabled={isButtonDisabled || isLoginComplete}
-              >
-                {isLoading ? (
-                  <ClipLoader color="#ffffff" loading={true} size={20} />
-                ) : (
-                  "Login"
-                )}
-              </motion.button>
-            </form>
-            <div className="divider-container">
-              <div className="divider-line"></div>
-              <div className="divider">Or Continue with</div>
-              <div className="divider-line"></div>
+              <span onClick={notifyNextFeature}>Forgot Password?</span>
             </div>
 
-            <div className="login-thru-socials">
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
-                whileTap={{ scale: 0.9 }}
-                onClick={notifyNextFeature}
-              >
-                <Icon icon="fe:google" /> <p>Google</p>
-              </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              type="submit"
+              className={`btn-finish ${isButtonDisabled ? "disabled" : ""}`}
+              disabled={isButtonDisabled || isLoginComplete}
+            >
+              {isLoading ? (
+                <ClipLoader color="#ffffff" loading={true} size={20} />
+              ) : (
+                "Login"
+              )}
+            </motion.button>
+          </form>
+          <div className="divider-container">
+            <div className="divider-line"></div>
+            <div className="divider">Or Continue with</div>
+            <div className="divider-line"></div>
+          </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
-                whileTap={{ scale: 0.9 }}
-                onClick={notifyNextFeature}
-              >
-                <Icon icon="ic:baseline-apple" /> <p>Apple</p>
-              </motion.button>
+          <div className="login-thru-socials">
+            <motion.button
+              whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={notifyNextFeature}
+            >
+              <Icon icon="fe:google" /> <p>Google</p>
+            </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
-                whileTap={{ scale: 0.9 }}
-                onClick={notifyNextFeature}
-              >
-                <Icon icon="uil:facebook" /> <p>Facebook</p>
-              </motion.button>
-            </div>
+            <motion.button
+              whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={notifyNextFeature}
+            >
+              <Icon icon="ic:baseline-apple" /> <p>Apple</p>
+            </motion.button>
 
-            <div className="form-footer">
-              <p className="sign-in-link">
-                Don't have an account?{" "}
-                <Link to="/register">
-                  <span>Sign Up</span>
-                </Link>
-              </p>
-            </div>
+            <motion.button
+              whileHover={{ scale: 1.05, backgroundColor: "#f7f7f7" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={notifyNextFeature}
+            >
+              <Icon icon="uil:facebook" /> <p>Facebook</p>
+            </motion.button>
+          </div>
+
+          <div className="form-footer">
+            <p className="sign-in-link">
+              Don't have an account?{" "}
+              <Link to="/register">
+                <span>Sign Up</span>
+              </Link>
+            </p>
           </div>
         </div>
-        <ToastContainer theme="dark" position="top-center" autoClose={3000} />
-      </motion.div>
-    </>
+      </div>
+      <ToastContainer theme="dark" position="top-center" autoClose={3000} />
+    </motion.div>
   );
 };
+
+
 
 export default LoginPage;

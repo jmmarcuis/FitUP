@@ -1,0 +1,133 @@
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem;
+  background-color: #1c1e21;
+  color: #ffffff;
+  margin: 0;
+
+  .messages-header {
+    margin-bottom: 0.5rem;
+    h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  }
+
+  .coach-desc {
+    width: 45%;
+    display: flex;
+    align-items: center;
+    background-color: #1c1e21;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+
+    img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+
+    .coach-details {
+      flex: 1;
+
+      h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #b8b8b8;
+      }
+    }
+
+    .info-icon {
+      font-size: 1.5rem;
+      color: #b8b8b8;
+      cursor: pointer;
+    }
+  }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    &::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    .message-bubble {
+      max-width: 60%;
+      word-wrap: break-word;
+      padding: 0.7rem 1.5rem;
+      display: inline-block;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      width: fit-content;
+      font-weight: 500;
+
+      &.client-message {
+        background-color: #bbf246;
+        color: #000;
+        margin-left: auto;
+        text-align: right;
+        border-radius: 10px 10px 0 10px;
+      }
+
+      &.coach-message {
+        background-color: #263238;
+        margin-right: auto;
+        border-radius: 10px 10px 10px 0;
+      }
+    }
+  }
+
+  .message-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #2a2a2e;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+
+    .message-input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 0.5rem;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #7d7d7d;
+      }
+    }
+
+    .send-button {
+      background: none;
+      border: none;
+      color: #bbf246;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

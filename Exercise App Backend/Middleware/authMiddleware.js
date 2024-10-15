@@ -1,22 +1,38 @@
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
-  // Get the token from headers
   const authHeader = req.header('Authorization');
+  console.log('Auth header:', authHeader);
   const token = authHeader && authHeader.split(' ')[1];
-
+  console.log('Extracted token:', token);
+ 
   if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.' });
   }
-
+ 
   try {
-    // Verify the token using the secret key
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach the decoded token to the request as 'user'
-    next(); // Proceed to the next middleware or route handler
+    console.log('Decoded token:', decoded);
+    req.user = {
+      _id: decoded.id,
+      email: decoded.email,
+      role: decoded.role
+    };
+    next();
   } catch (err) {
+    console.error('Token verification error:', err);
     return res.status(403).json({ message: 'Invalid or expired token.' });
   }
 };
 
-module.exports = { verifyToken };
+
+const isCoach = (req, res, next) => {
+  console.log('isCoach middleware - req.user:', req.user);
+  if (req.user && req.user.role === 'coach') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied. Coach role required.' });
+  }
+};
+
+module.exports = { verifyToken, isCoach };

@@ -1,0 +1,96 @@
+.dashboard-home-container {
+  padding: 20px;
+  background-color: #1f1f1f;
+  color: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+
+    .greeting {
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      p {
+        font-size: 1.2rem;
+        margin: 0;
+        color: #9d9d9d;
+      }
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 20px;
+
+      .header-icon {
+        font-size: 24px;
+        cursor: pointer;
+        color: #ffffff;
+
+        &:hover {
+          color: #bbf246;
+        }
+      }
+    }
+  }
+
+  .coach-section {
+    margin-top: 30px;
+
+    .coach-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #ffffff;
+      }
+
+      .see-more {
+        font-size: 1rem;
+        text-decoration: none;
+        color: #bbf246;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .coach-slider {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scroll-behavior: smooth;
+
+      .coach-card {
+        flex-shrink: 0;
+      }
+
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #333;
+        border-radius: 10px;
+      }
+    }
+  }
+}
