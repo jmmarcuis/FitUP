@@ -3,7 +3,6 @@ const Message = require('../Models/MessageModel');
 const Collaboration = require('../Models/CollaborationModel');
 const IV_LENGTH = 16;
 
-
 function encrypt(text) {
   const encryptionKey = Buffer.from(process.env.ENCRYPTION_KEY, 'hex');
   const iv = crypto.randomBytes(IV_LENGTH);
@@ -27,8 +26,6 @@ function decrypt(text) {
 
   return decrypted.toString();
 }
-
-
 
 exports.sendMessage = async (req, res) => {
   try {

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./Messages.scss";
-import coachImage from "../../assets/TrainerImages/coach-2.jpg"; // Update path based on your setup
+import dummyImage from "../../assets/TrainerImages/coach-1.jpg"; // Update path based on your setup
 import CoachDetailsModal from "../Modals/CoachModals/CoachDetailsModal";
+import { getCollaborationByClient } from '../../services/collaborationService';
+import { getCollaborationMessages } from '../../services/messageService';
 
 const Messages = () => {
+
   const [messages, setMessages] = useState([
     { sender: "coach", text: "Hi, please check the new task." },
     { sender: "client", text: "Got it. Thanks." },
@@ -15,8 +18,55 @@ const Messages = () => {
     { sender: "client", text: "Will check it soon." },
   ]);
 
+  const [coachName, setCoachName] = useState("Kyriakos Kapakoulak");
+  const [coachSpecialization, setSpecialization] = useState("Jumping Rope");
+  const [coachEmail, setEmail] = useState("hello@gmail.com");
+  const [coachImage, setCoachImage] = useState(dummyImage);
   const [newMessage, setNewMessage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchCollaboration();
+  }, [])
+
+  const fetchCollaboration = async () => {
+    const collab = await getCollaborationByClient();
+
+    if (collab) {
+      const { firstName, lastName, specialization, profilePicture, collaborationId, coachId, email } = collab;
+      console.log(`Coach Name: ${firstName} ${lastName}`);
+      setCoachName(`${firstName} ${lastName}`)
+      setSpecialization(specialization)
+      setCoachImage(profilePicture)
+      fetchMessages(coachId, collaborationId);
+      setEmail(email);
+    } else {
+      console.log("No active coach found");
+    }
+
+  };
+
+  const fetchMessages = async (coachId: string, collaborationId: string) => {
+    const messages = await getCollaborationMessages(collaborationId);
+
+    if (messages) {
+      const sortedMessages = messages.sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+
+      // Map the messages into the desired structure for the state
+      const mappedMessages = sortedMessages.map((message) => ({
+        sender: message.sender === coachId ? 'coach' : 'client',
+        text: message.content,
+      }));
+
+      setMessages(mappedMessages);
+
+    } else {
+      console.log("No active coach found");
+    }
+  };
+
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -48,12 +98,13 @@ const Messages = () => {
       </div>
 
       {/* Coach Info */}
+
       <div className="coach-desc">
         <img src={coachImage} alt="Coach" />
         <div className="coach-details">
-          <h4>Kyriakos Kapakoulak</h4>
-          <p>Strongman Instructor</p>
-          <p>09xx xxxx xxxxx</p>
+          <h4>{coachName}</h4>
+          <p>{coachSpecialization}</p>
+          <p>{coachEmail}</p>
         </div>
         <Icon
           icon="mdi:information"
@@ -68,9 +119,8 @@ const Messages = () => {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`message-bubble ${
-              message.sender === "client" ? "client-message" : "coach-message"
-            }`}
+            className={`message-bubble ${message.sender === "client" ? "client-message" : "coach-message"
+              }`}
           >
             {message.text}
           </div>

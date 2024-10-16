@@ -290,3 +290,48 @@ exports.getPendingRequests = async (req, res) => {
     });
   }
 };
+
+exports.getCollaborationByClient = async (req, res) => {
+  try {
+    const clientId = req.user._id; // Get client ID from authenticated user
+
+    if (!clientId) {
+      return res
+        .status(400)
+        .json({ message: "Client ID not found in the request" });
+    }
+
+    // Find the active collaboration for the client (with status "active")
+    const collaboration = await Collaboration.findOne({
+      client: clientId,
+      status: "active",
+    }).populate("coach", "firstName lastName email coachSpecialization profilePicture");
+
+    if (!collaboration) {
+      return res
+        .status(200)
+        .json({ message: "No active coach found", coach: null });
+    }
+
+    const coachDetails = {
+      collaborationId: collaboration._id,
+      coachId: collaboration.coach._id,
+      firstName: collaboration.coach.firstName,
+      lastName: collaboration.coach.lastName,
+      email: collaboration.coach.email,
+      specialization: collaboration.coach.coachSpecialization,
+      profilePicture: collaboration.coach.profilePicture,
+      startDate: collaboration.startDate,
+    };
+
+    res.status(200).json({
+      message: "Active coach retrieved successfully",
+      coach: coachDetails,
+    });
+  } catch (error) {
+    console.error("Error in getCoach:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching coach", error: error.message });
+  }
+};
