@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./Messages.scss";
-import coachImage from "../../assets/TrainerImages/coach-2.jpg"; // Update path based on your setup
+import dummyImage from "../../assets/TrainerImages/coach-2.jpg"; // Update path based on your setup
 import CoachDetailsModal from "../Modals/CoachModals/CoachDetailsModal";
+import { getClientCollabotion } from '../../services/collaborationService';
+import { getCollaborationMessages } from '../../services/messageService';
 
 const Messages = () => {
   const [messages, setMessages] = useState([
@@ -15,13 +17,64 @@ const Messages = () => {
     { sender: "client", text: "Will check it soon." },
   ]);
 
+  const [clientName, setClientName] = useState("Kyriakos Kapakoulak");
+  const [clientDate, setClientDate] = useState("1-1-2000");
+  const [clientEmail, setEmail] = useState("hello@gmail.com");
+  const [clientImage, setClientImage] = useState(dummyImage);
   const [newMessage, setNewMessage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchCollaboration();
+  }, [])
+
+  const fetchCollaboration = async () => {
+    const collab = await getClientCollabotion();
+
+    if (collab) {
+      const { firstName, lastName, clientImage, collaborationId, email, startDate, clientId } = collab;
+      const formattedDate = new Date(startDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      setClientName(`${firstName} ${lastName}`)
+      setClientImage(clientImage)
+      setClientDate(formattedDate)
+      fetchMessages(clientId, collaborationId);
+      setEmail(email);
+    } else {
+      console.log("No active coach found");
+    }
+
+  };
+
+  const fetchMessages = async (clientId: string, collaborationId: string) => {
+    const messages = await getCollaborationMessages(collaborationId);
+  
+    if (messages) {
+      const sortedMessages = messages.sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+  
+      const mappedMessages = sortedMessages.map((message) => ({
+        sender: message.sender === clientId ? "coach" : "client",
+        text: message.content,
+      }));
+  
+      setMessages(mappedMessages);
+      console.log(clientId)
+    } else {
+      console.log("No messages found.");
+    }
+  };
+  
+  
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       setMessages([...messages, { sender: "client", text: newMessage }]);
-      setNewMessage(""); // Clear input after sending
+      setNewMessage(""); 
     }
   };
 
@@ -49,11 +102,11 @@ const Messages = () => {
 
       {/* Coach Info */}
       <div className="coach-desc">
-        <img src={coachImage} alt="Coach" />
+        <img src={clientImage} alt="Coach" />
         <div className="coach-details">
-          <h4>Kyriakos Kapakoulak</h4>
-          <p>Strongman Instructor</p>
-          <p>09xx xxxx xxxxx</p>
+          <h4>{clientName}</h4>
+          <p>{clientEmail}</p>
+          <p>Client Since: {clientDate}</p>
         </div>
         <Icon
           icon="mdi:information"
@@ -95,7 +148,7 @@ const Messages = () => {
       {/* Coach Details Modal */}
       {modalVisible && (
         <CoachDetailsModal
-          image={coachImage}
+          image={dummyImage}
           name="Kyriakos Kapakoulak"
           description="Strongman Instructor with 10 years of experience."
           onClose={handleCloseModal}
