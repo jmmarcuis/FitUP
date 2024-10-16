@@ -242,6 +242,8 @@ exports.login = async (req, res) => {
         firstName: client.firstName,
         lastName: client.lastName,
         email: client.email,
+        profilePicture: client.profilePicture,
+        // Add any other relevant client information you want to send
       },
     });
   } catch (error) {

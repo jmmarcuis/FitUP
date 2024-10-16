@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import "./DashboardSidebar.scss";
+ import "./DashboardSidebar.scss";
 
 const DashboardSidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const DashboardSidebar: React.FC = () => {
     navigate("/login"); 
   };
 
+ 
   return (
     <aside className="dashboard-sidebar">
       <div className="dashboard-logo">{/* Logo */}</div>
@@ -25,7 +26,6 @@ const DashboardSidebar: React.FC = () => {
           <li>
             <Link to="/dashboard">
               <a 
-                href="#home" 
                 className={activeItem === 'home' ? 'active' : ''} 
                 onClick={() => handleItemClick('home')}
               >
@@ -36,7 +36,6 @@ const DashboardSidebar: React.FC = () => {
           <li>
             <Link to="/dashboard/workouts">
              <a 
-                href="#workouts" 
                 className={activeItem === 'workouts' ? 'active' : ''} 
                 onClick={() => handleItemClick('workouts')}
               >
@@ -47,7 +46,6 @@ const DashboardSidebar: React.FC = () => {
           <li>
             <Link to="/dashboard/messages">
               <a 
-                href="#messages" 
                 className={activeItem === 'messages' ? 'active' : ''} 
                 onClick={() => handleItemClick('messages')}
               >
@@ -58,7 +56,6 @@ const DashboardSidebar: React.FC = () => {
           <li>
             <Link to="/dashboard/settings">
               <a 
-                href="#settings" 
                 className={activeItem === 'settings' ? 'active' : ''} 
                 onClick={() => handleItemClick('settings')}
               >

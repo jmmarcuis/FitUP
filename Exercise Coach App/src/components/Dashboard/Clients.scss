@@ -1,0 +1,52 @@
+$background-color: #1c1e21;
+$secondary-color: #fff;
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$accent-color: #bbf246;
+$error-color: #ff6b6b;
+$button-bg: #bbf246;
+$button-hover-bg: #99d037;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+.client-container {
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem;
+  background-color: $background-color;
+  color: #ffffff;
+  margin: 0;
+
+  .client-button-flex {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    button {
+      padding: 17px 40px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background-color: transparent; // Default background
+      border: 2px solid $button-bg;
+      color: $accent-color;
+      transition: background-color 0.3s ease, color 0.3s ease; // Added color transition
+      margin-bottom: 20px;
+      font-size: 16px;
+
+      &:hover {
+        background-color: $button-hover-bg; // Hover state
+        color: $primary-color; // Hover text color
+      }
+
+      &.active { // Active state styles
+        background-color: $button-hover-bg; // Use hover background when active
+        color: $primary-color; // Change text color for active button
+        border-color: $button-hover-bg; // Optional - change border color for active button
+      }
+    }
+  }
+}

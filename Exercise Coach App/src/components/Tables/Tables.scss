@@ -1,0 +1,115 @@
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$accent-color: #bbf246;
+$error-color: #DA2B2B;
+$button-bg: #bbf246;
+$button-hover-bg: #99d037;
+
+.table-container {
+  color: $text-color;
+  background-color: $primary-color;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 100%;
+  overflow-x: auto;
+
+  h2 {
+    color: $text-color;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    border-bottom: 2px solid $secondary-color;
+    padding-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid $secondary-color;
+    }
+
+    th {
+      color: $accent-color;
+      font-weight: bold;
+    }
+
+    td {
+      color: $text-color;
+      vertical-align: middle;
+
+      img {
+        max-width: 40px;
+        border-radius: 10%;
+      }
+    }
+
+    .action-flex {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+
+      button {
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background-color: $button-bg;
+        color: $primary-color;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: $button-hover-bg;
+        }
+
+    
+      }
+    }
+  }
+
+  .complete-contract-button{
+    padding: 17px 40px;
+    border-radius: 10px;
+    background-color: $error-color;
+    border: 3px $primary-color solid ;
+    color: $primary-color;
+    cursor: pointer;
+
+
+    &:hover {
+      background-color: $error-color;
+    }
+
+    &:focus {
+      outline: none;
+      border: 3px $primary-color solid ;
+     }
+
+  }
+
+  .error {
+    color: $error-color;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  @media screen and (max-width: 768px) {
+    table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+
+      th,
+      td {
+        white-space: nowrap;
+      }
+    }
+  }
+}

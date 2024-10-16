@@ -12,9 +12,10 @@ import DashboardHome from "../components/Dashboard/DashboardHome";
 // import Workouts from "../components/Dashboard/Workouts";
 // import Settings from "../components/Dashboard/Settings";
 import Messages from "../components/Dashboard/Messages";
+import Clients from "../components/Dashboard/Clients";
 
 const DashboardPage: React.FC = () => {
-  const { isMobile, showRightSidebar } = useDashboardLayout();
+  const { isMobile } = useDashboardLayout();
 
   const pageTransition = {
     initial: { y: 20 },
@@ -38,6 +39,7 @@ const DashboardPage: React.FC = () => {
           ) : (
             <Routes>
               <Route path="/" element={<DashboardHome />} />
+              <Route path="clients" element={<Clients />} />
               {/* <Route path="workouts" element={<Workouts />} /> */}
               {/* <Route path="settings" element={<Settings />} /> */}
               <Route path="messages" element={<Messages />} />
