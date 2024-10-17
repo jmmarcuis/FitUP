@@ -63,6 +63,15 @@ exports.sendMessage = async (req, res) => {
     });
 
     await message.save();
+    const io = req.app.get('io');
+    io.to(collaborationId).emit('newMessage', {
+      collaborationId,
+      message: {
+        sender: senderId,
+        content,
+        timestamp: Date.now()
+      }
+    });
 
     res.status(201).json({ message: 'Message sent successfully', message });
   } catch (error) {

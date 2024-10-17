@@ -22,3 +22,29 @@ export const getCollaborationMessages = async (
         return null;
     }
 };
+
+
+export const saveMessage = async (
+  content: string,
+  collaborationId: string
+): Promise<Message | null> => {
+  const token = localStorage.getItem('token'); // Ensure token is stored
+
+  if (!token) {
+    alert('Your login token has expired. Please log in to continue.');
+    return null;
+  }
+
+  try {
+    const response = await api.post(
+      `${API_BASE_URL}/messages`, 
+      { content, collaborationId: collaborationId }
+    );
+
+    console.log('Message saved:', response.data ); 
+    return response.data; 
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};

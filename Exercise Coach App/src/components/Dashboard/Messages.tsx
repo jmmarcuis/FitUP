@@ -5,17 +5,13 @@ import dummyImage from "../../assets/TrainerImages/coach-2.jpg"; // Update path 
 import CoachDetailsModal from "../Modals/CoachModals/CoachDetailsModal";
 import { getClientCollabotion } from '../../services/collaborationService';
 import { getCollaborationMessages } from '../../services/messageService';
+import { saveMessage } from '../../services/messageService';
+import { useMessageContext } from '../../Context/MessageContext';
 
 const Messages = () => {
-  const [messages, setMessages] = useState([
-    { sender: "coach", text: "Hi, please check the new task." },
-    { sender: "client", text: "Got it. Thanks." },
-    {
-      sender: "coach",
-      text: "Hi, please check the last task that I have completed.",
-    },
-    { sender: "client", text: "Will check it soon." },
-  ]);
+  const socket = useMessageContext();
+  const [messages, setMessages] = useState<{ sender: string, text: string }[]>([]);
+
 
   const [clientName, setClientName] = useState("Kyriakos Kapakoulak");
   const [clientDate, setClientDate] = useState("1-1-2000");
@@ -23,6 +19,49 @@ const Messages = () => {
   const [clientImage, setClientImage] = useState(dummyImage);
   const [newMessage, setNewMessage] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [collaborationId, setCollaborationId] = useState<string>("");
+  const [senderId, setSenderId] = useState<string>("");
+
+  useEffect(() => {
+    console.log(socket);
+    console.log(collaborationId);
+
+    if (!socket) return;
+    console.log("socket")
+
+    socket.emit('joinCollaboration', collaborationId, (ack: { error?: string }) => {
+      console.log("IM HERE")
+      if (ack.error) {
+        console.error(ack.error);
+      }
+    });
+
+    // Listen for new messages
+    socket.on('newMessage', (data: { collaborationId: string; message: { content: string, sender: string, timestamp: number } }) => {
+      console.log("kulit", data)
+      if (data.collaborationId === collaborationId) {
+        setMessages((prevMessages) => [
+          {
+            sender: data.message.sender === senderId ? 'client' : 'coach', // Ensure correct identification
+            text: data.message.content,
+          },
+            ...prevMessages
+        ]);
+      }
+    });
+
+    // Handle errors
+    socket.on('error', (err: Error) => {
+      console.error('Socket error:', err.message);
+      console.error(err.message);
+    });
+
+    // Cleanup listeners on component unmount
+    return () => {
+      socket.off('newMessage');
+      socket.off('error');
+    };
+  }, [socket, collaborationId]);
 
   useEffect(() => {
     fetchCollaboration();
@@ -40,41 +79,55 @@ const Messages = () => {
       });
       setClientName(`${firstName} ${lastName}`)
       setClientImage(clientImage)
+      setSenderId(clientId);
       setClientDate(formattedDate)
       fetchMessages(clientId, collaborationId);
+      setCollaborationId(collaborationId);
       setEmail(email);
     } else {
       console.log("No active coach found");
     }
-
   };
 
   const fetchMessages = async (clientId: string, collaborationId: string) => {
     const messages = await getCollaborationMessages(collaborationId);
-  
+
     if (messages) {
       const sortedMessages = messages.sort(
-        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
-  
+
       const mappedMessages = sortedMessages.map((message) => ({
-        sender: message.sender === clientId ? "coach" : "client",
+        sender: message.sender === clientId ? "client" : "coach",
         text: message.content,
       }));
-  
+
       setMessages(mappedMessages);
       console.log(clientId)
     } else {
       console.log("No messages found.");
     }
   };
-  
-  
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      setMessages([...messages, { sender: "client", text: newMessage }]);
-      setNewMessage(""); 
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim() && collaborationId) {
+      try {
+        console.log("Calling saveMessage API...");
+        const savedMessage = await saveMessage(newMessage, collaborationId);
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: 'coach', text: newMessage }
+        ]);
+        setNewMessage(""); // Clear input field after sending
+
+      } catch (error) {
+        console.error("Error saving message:", error);
+        alert("Error sending message. Please check your connection and try again.");
+      }
+    } else {
+      console.log("New message or collaborationId is missing.");
     }
   };
 
@@ -87,8 +140,9 @@ const Messages = () => {
   };
 
   // hit enter to send message
-  const handleKeyDown = (e: { key: string; }) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -117,13 +171,12 @@ const Messages = () => {
       </div>
 
       {/* Message Chat Area */}
-      <div className="chat-area">
+      <div className="chat-area overflow-y-auto">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`message-bubble ${
-              message.sender === "client" ? "client-message" : "coach-message"
-            }`}
+            className={`message-bubble ${message.sender === "coach" ? "client-message" : "coach-message"
+              }`}
           >
             {message.text}
           </div>
