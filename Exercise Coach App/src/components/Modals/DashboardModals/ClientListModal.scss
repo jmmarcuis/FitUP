@@ -1,0 +1,48 @@
+$primary-color: #ffffff;
+$secondary-color: #0c0c0c;
+$highlight-color: #bbf246;
+$background-color: #1c1e21;
+$input-background: #2c2e31;
+$border-color: #3a3d40;
+
+.client-list-details-modal {
+  background-color: $background-color;
+  color: $primary-color;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  outline: none;
+  position: relative;
+
+  .header-modal-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    span{
+        color: $highlight-color;
+        text-decoration: underline;
+    }
+    .iconify {
+      cursor: pointer;
+    }
+  }
+  .client-info-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+
+    img {
+      max-width: 60px;
+      max-height: 60px;
+      border-radius: 10px;
+    }
+  }
+
+  
+}

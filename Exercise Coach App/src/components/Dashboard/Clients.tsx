@@ -4,7 +4,7 @@ import "./Clients.scss";
 import ReactModal from "react-modal";
 import ActiveClientTable from "../Tables/ActiveClientTable";
 import PendingClientTable from "../Tables/PendingClientTable";
-
+import ClientReportCard from "../workout components/ClientReportCard";
 ReactModal.setAppElement("#root");
 
 interface ClientsState {
@@ -27,6 +27,8 @@ export default class Clients extends Component<{}, ClientsState> {
     return (
       <>
         <div className="client-container">
+        <ClientReportCard />
+
           <div className="client-button-flex">
             <button
               className={!this.state.showActiveClients ? 'active' : ''}

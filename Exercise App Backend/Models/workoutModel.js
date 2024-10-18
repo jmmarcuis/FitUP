@@ -1,19 +1,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const WorkoutSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  title: { type: String, required: true },
-  date: { type: Date, default: Date.now },
-  exercises: [{
-    exercise: { type: Schema.Types.ObjectId, ref: 'Exercise', required: true },
-    sets: [{
-      reps: { type: Number, required: true, min: 1 },
-      weight: { type: Number, required: true, min: 0 },
-      completed: { type: Boolean, default: false },
-      rpe: { type: Number, required: true, min: 1, max: 10 }
-    }]
-  }]
+const SetSchema = new Schema({
+  reps: { type: Number, default: 0 },
+  weight: { type: Number, default: 0 },
+  RPE:{type:Number,default:0}
 });
+
+const ExerciseSchema = new Schema({
+  exerciseId: { type: String, required: true },
+  name: { type: String, required: true },
+  sets: [SetSchema]
+});
+
+const WorkoutSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String },
+  date: { type: Date, required: true },
+  exercises: [ExerciseSchema],
+  collaboration: { type: Schema.Types.ObjectId, ref: 'Collaboration', required: true },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'Coach', required: true }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Workout', WorkoutSchema);

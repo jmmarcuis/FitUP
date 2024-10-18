@@ -290,3 +290,67 @@ exports.getPendingRequests = async (req, res) => {
     });
   }
 };
+
+exports.getActiveClientsCount = async (req, res) => {
+  try {
+    const coachId = req.user._id;
+
+    if (!coachId) {
+      return res.status(400).json({ message: "Coach ID not found in the request" });
+    }
+
+    const activeClientsCount = await Collaboration.countDocuments({
+      coach: coachId,
+      status: "active",
+    });
+
+    res.status(200).json({
+      message: "Active clients count retrieved successfully",
+      activeClientsCount,
+    });
+  } catch (error) {
+    console.error("Error in getActiveClientsCount:", error);
+    res.status(500).json({ message: "Error fetching active clients count", error: error.message });
+  }
+};
+
+exports.getPendingRequestsCount = async (req, res) => {
+  try {
+    const coachId = req.user._id;
+
+    if (!coachId) {
+      return res.status(400).json({ message: "Coach ID not found in the request" });
+    }
+
+    const pendingRequestsCount = await Collaboration.countDocuments({
+      coach: coachId,
+      status: "pending",
+    });
+
+    res.status(200).json({
+      message: "Pending requests count retrieved successfully",
+      pendingRequestsCount,
+    });
+  } catch (error) {
+    console.error("Error in getPendingRequestsCount:", error);
+    res.status(500).json({ message: "Error fetching pending requests count", error: error.message });
+  }
+};
+
+exports.getClientCounts = async (req, res) => {
+  try {
+    const coachId = req.user._id;
+
+    const totalClients = await Collaboration.countDocuments({ coach: coachId });
+    const activeClients = await Collaboration.countDocuments({ coach: coachId, status: 'active' });
+    const pendingClients = await Collaboration.countDocuments({ coach: coachId, status: 'pending' });
+
+    res.status(200).json({
+      totalClients,
+      activeClients,
+      pendingClients,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching client counts", error: error.message });
+  }
+};

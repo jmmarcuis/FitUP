@@ -1,0 +1,116 @@
+$primary-color: #ffffff;
+$secondary-color: #0c0c0c;
+$highlight-color: #bbf246;
+$background-color: #1c1e21;
+$input-background: #2c2e31;
+$border-color: #3a3d40;
+
+.create-workout-modal {
+  background-color: $background-color;
+  color: $primary-color;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 590px;
+  max-height: 80vh;
+  overflow-y: auto;
+  outline: none;
+  position: relative;
+
+  .header-modal-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    span {
+      color: $highlight-color;
+      text-decoration: underline;
+    }
+
+    .iconify {
+      cursor: pointer;
+      font-size: 24px; // Adjust size for better visibility
+    }
+  }
+
+  .workout-form-container {
+    .section-title {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .form-row {
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+
+        .iconify {
+          margin-right: 5px;
+        }
+      }
+
+      input, textarea {
+        background-color: $input-background;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        padding: 10px;
+        color: $primary-color;
+        transition: border-color 0.3s;
+
+        &:focus {
+          border-color: $highlight-color;
+          outline: none;
+        }
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical; // Allow vertical resizing
+      
+      }
+
+     
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      .btn-primary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+        padding: 12px;
+        background-color: $highlight-color;
+        color: $secondary-color;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: darken($highlight-color, 5%);
+        }
+  
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

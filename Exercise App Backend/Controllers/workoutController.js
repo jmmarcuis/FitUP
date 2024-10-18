@@ -1,91 +1,89 @@
-const Workout = require('../models/workoutModel');
+const Workout = require('../Models/workoutModel');
+const Collaboration = require('../Models/CollaborationModel');
+const axios = require('axios');
+const moment = require('moment');
 
 exports.createWorkout = async (req, res) => {
   try {
-    const { title, date } = req.body;
-    const userId = req.user._id;  
-
+    const { name, description, date, collaborationId } = req.body;
     const workout = new Workout({
-      user: userId,
-      title,
+      name,
+      description,
       date,
-      exercises: []   
+      exercises: [],
+      collaboration: collaborationId,
+      createdBy: req.user._id
+    });
+    await workout.save();
+    
+    await Collaboration.findByIdAndUpdate(collaborationId, {
+      $push: { workouts: workout._id }
     });
 
-    const savedWorkout = await workout.save();
-    res.status(201).json(savedWorkout);
+    res.status(201).json(workout);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// exports.getWorkouts = async (req, res) => {
-//   try {
-//     const userId = req.user._id;
-//     const workouts = await Workout.find({ user: userId })
-//       .populate('exercises.exercise')
-//       .sort({ date: -1 });
-//     res.json(workouts);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-exports.getWorkoutsByDate = async (req, res) => {
+exports.getWorkouts = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { date } = req.params;
-    const startDate = new Date(date);
-    startDate.setHours(0, 0, 0, 0);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 1);
-
-    const workouts = await Workout.find({
-      user: userId,
-      date: { $gte: startDate, $lt: endDate }
-    }).populate('exercises.exercise');
-
+    const { collaborationId } = req.params;
+    const workouts = await Workout.find({ collaboration: collaborationId });
     res.json(workouts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
-exports.getWorkout = async (req, res) => {
+exports.getWorkoutsByDate = async (req, res) => {
   try {
-    const workout = await Workout.findById(req.params.id).populate('exercises.exercise');
-    if (!workout) {
-      return res.status(404).json({ message: 'Workout not found' });
-    }
-    res.json(workout);
+    const { date } = req.params;
+    const coachId = req.user._id;
+
+    const startDate = moment(date).startOf('day').toDate();
+    const endDate = moment(date).endOf('day').toDate();
+
+    const collaborations = await Collaboration.find({ coach: coachId });
+    const collaborationIds = collaborations.map(collab => collab._id);
+
+    const workouts = await Workout.find({
+      date: { $gte: startDate, $lte: endDate },
+      collaboration: { $in: collaborationIds }
+    }).populate({
+      path: 'collaboration',
+      select: 'client',
+      populate: {
+        path: 'client',
+        select: 'firstName lastName'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      count: workouts.length,
+      workouts: workouts
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error in getWorkoutsByDate:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
   }
 };
 
 exports.updateWorkout = async (req, res) => {
   try {
-    const { title, date, exercises } = req.body;
-    const workout = await Workout.findById(req.params.id);
-
-    if (!workout) {
-      return res.status(404).json({ message: 'Workout not found' });
-    }
-
-    workout.title = title;
-    workout.date = date;
-    workout.exercises = exercises.map(ex => ({
-      exercise: ex.exerciseId,
-      sets: ex.sets.map(set => ({
-        reps: set.reps,
-        weight: set.weight,
-        completed: set.completed,
-        rpe: set.rpe
-      }))
-    }));
-
-    const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
+    const { workoutId } = req.params;
+    const { name, description, date } = req.body;
+    const workout = await Workout.findByIdAndUpdate(workoutId, {
+      name,
+      description,
+      date
+    }, { new: true });
+    res.json(workout);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -93,46 +91,66 @@ exports.updateWorkout = async (req, res) => {
 
 exports.deleteWorkout = async (req, res) => {
   try {
-    const workout = await Workout.findById(req.params.id);
-    if (!workout) {
-      return res.status(404).json({ message: 'Workout not found' });
-    }
-    await workout.deleteOne();
+    const { workoutId } = req.params;
+    await Workout.findByIdAndDelete(workoutId);
+    await Collaboration.updateOne(
+      { workouts: workoutId },
+      { $pull: { workouts: workoutId } }
+    );
     res.json({ message: 'Workout deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.addExerciseToWorkout = async (req, res) => {
   try {
-    const { workoutId, exerciseId } = req.body;
-    
-    // Find the workout by ID
-    const workout = await Workout.findById(workoutId);
+    const { workoutId } = req.params;
+    const { exerciseId, initialSets = 1 } = req.body;
+
+    // Fetch exercise details from wger API
+    const response = await axios.get(`https://wger.de/api/v2/exerciseinfo/${exerciseId}/`);
+    const exerciseData = response.data;
+
+    const newExercise = {
+      exerciseId,
+      name: exerciseData.name,
+      sets: Array(initialSets).fill({ reps: 0, weight: 0, RPE:0 })
+    };
+
+    const workout = await Workout.findByIdAndUpdate(
+      workoutId,
+      { $push: { exercises: newExercise } },
+      { new: true }
+    );
+
     if (!workout) {
       return res.status(404).json({ message: 'Workout not found' });
     }
 
-    // Check if the exercise exists (assuming you have an Exercise model)
-    const exerciseExists = await Exercise.findById(exerciseId);
-    if (!exerciseExists) {
-      return res.status(404).json({ message: 'Exercise not found' });
+    res.json(workout);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.updateExerciseInWorkout = async (req, res) => {
+  try {
+    const { workoutId, exerciseId } = req.params;
+    const { sets } = req.body;
+
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId, 'exercises._id': exerciseId },
+      { $set: { 'exercises.$.sets': sets } },
+      
+      { new: true }
+    );
+
+    if (!workout) {
+      return res.status(404).json({ message: 'Workout or exercise not found' });
     }
 
-    // Add a new exercise with the initial set having valid default values
-    workout.exercises.push({
-      exercise: exerciseId,
-      sets: [{
-        reps: 1,
-        weight: 0,
-        completed: false,
-        rpe: 1  
-      }]
-    });
-
-    const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
+    res.json(workout);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -140,96 +158,99 @@ exports.addExerciseToWorkout = async (req, res) => {
 
 exports.addSetToExercise = async (req, res) => {
   try {
-    const { workoutId, exerciseId } = req.body;
-    
-    // Find the workout by ID and the specific exercise
-    const workout = await Workout.findOne(
-      { 
-        _id: workoutId, 
-        "exercises.exercise": exerciseId 
-      }
+    const { workoutId, exerciseId } = req.params;
+    const newSet = { reps: 0, weight: 0 };
+
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId, 'exercises._id': exerciseId },
+      { $push: { 'exercises.$.sets': newSet } },
+      { new: true }
     );
 
     if (!workout) {
       return res.status(404).json({ message: 'Workout or exercise not found' });
     }
 
-    // Find the index of the exercise
-    const exerciseIndex = workout.exercises.findIndex(
-      (ex) => ex.exercise.toString() === exerciseId
-    );
-
-    // Add a new set to the specified exercise, with valid initial values
-    workout.exercises[exerciseIndex].sets.push({
-      reps: 1,  // Minimum valid value
-      weight: 0,  // Minimum valid value
-      completed: false,
-      rpe: 1  // Minimum valid value
-    });
-
-    const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
-  } catch (error) {
-    if (error.name === 'CastError') {
-      return res.status(400).json({ message: 'Invalid workout or exercise ID' });
-    }
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-exports.deleteSetFromExercise = async (req, res) => {
-  try {
-    const { workoutId, exerciseIndex, setIndex } = req.body;
-
-    // Find the workout by ID
-    const workout = await Workout.findById(workoutId);
-    if (!workout) {
-      return res.status(404).json({ message: 'Workout not found' });
-    }
-
-    // Check if the exercise exists
-    if (!workout.exercises[exerciseIndex]) {
-      return res.status(404).json({ message: 'Exercise not found in workout' });
-    }
-
-    // Check if the set exists
-    if (!workout.exercises[exerciseIndex].sets[setIndex]) {
-      return res.status(404).json({ message: 'Set not found in exercise' });
-    }
-
-    // Remove the set from the array
-    workout.exercises[exerciseIndex].sets.splice(setIndex, 1);
-
-    const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
+    res.json(workout);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-
-
-exports.updateSet = async (req, res) => {
+exports.updateSetInExercise = async (req, res) => {
   try {
-    const { workoutId, exerciseIndex, setIndex, reps, weight, completed, rpe } = req.body;
-    
-    const workout = await Workout.findById(workoutId);
+    const { workoutId, exerciseId, setIndex } = req.params;
+    const { reps, weight, RPE } = req.body;
+
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId, 'exercises._id': exerciseId },
+      { 
+        $set: { 
+          [`exercises.$[exercise].sets.${setIndex}.reps`]: reps,
+          [`exercises.$[exercise].sets.${setIndex}.weight`]: weight,
+          [`exercises.$[exercise].sets.${setIndex}.RPE`]: RPE
+        } 
+      },
+      { 
+        arrayFilters: [{ 'exercise._id': exerciseId }],
+        new: true 
+      }
+    );
+
+    if (!workout) {
+      return res.status(404).json({ message: 'Workout, exercise, or set not found' });
+    }
+
+    res.json(workout);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteSetFromExercise = async (req, res) => {
+  try {
+    const { workoutId, exerciseId, setIndex } = req.params;
+
+    const workout = await Workout.findOneAndUpdate(
+      { _id: workoutId, 'exercises._id': exerciseId },
+      { $unset: { [`exercises.$[exercise].sets.${setIndex}`]: 1 } },
+      { 
+        arrayFilters: [{ 'exercise._id': exerciseId }],
+        new: true 
+      }
+    );
+
+    if (!workout) {
+      return res.status(404).json({ message: 'Workout, exercise, or set not found' });
+    }
+
+    // Remove the null element created by $unset
+    await Workout.findOneAndUpdate(
+      { _id: workoutId, 'exercises._id': exerciseId },
+      { $pull: { 'exercises.$.sets': null } }
+    );
+
+    res.json(workout);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteExerciseFromWorkout = async (req, res) => {
+  try {
+    const { workoutId, exerciseId } = req.params;
+
+    const workout = await Workout.findByIdAndUpdate(
+      workoutId,
+      { $pull: { exercises: { _id: exerciseId } } },
+      { new: true }
+    );
+
     if (!workout) {
       return res.status(404).json({ message: 'Workout not found' });
     }
 
-    if (!workout.exercises[exerciseIndex] || !workout.exercises[exerciseIndex].sets[setIndex]) {
-      return res.status(404).json({ message: 'Exercise or Set not found' });
-    }
-
-    const set = workout.exercises[exerciseIndex].sets[setIndex];
-    if (reps !== undefined) set.reps = reps;
-    if (weight !== undefined) set.weight = weight;
-    if (completed !== undefined) set.completed = completed;
-    if (rpe !== undefined) set.rpe = rpe;
-
-    const updatedWorkout = await workout.save();
-    res.json(updatedWorkout);
+    res.json(workout);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -9,4 +9,9 @@ router.put('/collaborations/:id/respond', verifyToken, isCoach, collaborationCon
 router.get('/collaborations/pending', verifyToken, isCoach, collaborationController.getPendingRequests);
 router.post('/collaborations/:id/finish', verifyToken, isCoach, collaborationController.finishCollaboration);
 router.get('/coach/active-clients', verifyToken, isCoach, collaborationController.getActiveClients);
+
+router.get('/coach/active-clients-count', verifyToken, isCoach, collaborationController.getActiveClientsCount);
+router.get('/coach/pending-clients-count', verifyToken, isCoach, collaborationController.getPendingRequestsCount);
+router.get('/coach/clients-counts', verifyToken, isCoach, collaborationController.getClientCounts);
+
 module.exports = router;

@@ -1,0 +1,59 @@
+$primary-color: #ffffff;
+$secondary-color: #0c0c0c;
+$highlight-color: #bbf246;
+$background-color: #1c1e21;
+$input-background: #2c2e31;
+$border-color: #3a3d40;
+
+
+
+
+.exercise-details-modal {
+  background-color: $background-color;
+  color: $primary-color;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  outline: none;
+  position: relative;
+
+  .flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h3 {
+      color: $highlight-color;
+      margin: 0;
+    }
+
+    .iconify {
+      cursor: pointer;
+      color: $primary-color;
+      font-size: 24px;
+    }
+  }
+
+  p {
+    margin-bottom: 5px;
+
+    strong {
+      color: $highlight-color;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: $highlight-color;
+    border-radius: 8px 8px 0 0;
+  }
+}

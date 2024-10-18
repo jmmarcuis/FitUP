@@ -30,21 +30,19 @@ const DashboardSidebar: React.FC = () => {
             <div className="dashboard-link-flex">
               <Link to="/dashboard">
                 <a
-                  href="#home"
                   className={activeItem === "home" ? "active" : ""}
                   onClick={() => handleItemClick("home")}
                 >
-                  <Icon icon="mdi:home" />
+                  <Icon icon="material-symbols:dashboard" /> 
                 </a>
               </Link>
-              <h3>Home</h3>
+              <h3>Dashboard</h3>
             </div>
           </li>
           <li>
             <div className="dashboard-link-flex">
               <Link to="/dashboard/clients">
                 <a
-                  href="#client"
                   className={activeItem === "client" ? "active" : ""}
                   onClick={() => handleItemClick("client")}
                 >
@@ -56,23 +54,8 @@ const DashboardSidebar: React.FC = () => {
           </li>
           <li>
             <div className="dashboard-link-flex">
-              <Link to="/dashboard/workouts">
-                <a
-                  href="#workouts"
-                  className={activeItem === "workouts" ? "active" : ""}
-                  onClick={() => handleItemClick("workouts")}
-                >
-                  <Icon icon="mdi:dumbbell" />
-                </a>
-              </Link>
-              <h3>Workout</h3>
-            </div>
-          </li>
-          <li>
-            <div className="dashboard-link-flex">
               <Link to="/dashboard/messages">
                 <a
-                  href="#messages"
                   className={activeItem === "messages" ? "active" : ""}
                   onClick={() => handleItemClick("messages")}
                 >
@@ -87,7 +70,6 @@ const DashboardSidebar: React.FC = () => {
             <div className="dashboard-link-flex">
               <Link to="/dashboard/settings">
                 <a
-                  href="#settings"
                   className={activeItem === "settings" ? "active" : ""}
                   onClick={() => handleItemClick("settings")}
                 >

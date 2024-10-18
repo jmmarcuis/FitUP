@@ -9,12 +9,12 @@ const { verifyToken } = require('./Middleware/authMiddleware');
 const connectDB = require('./Config/dbConfig');
 const { cloudinary, checkCloudinaryConfig } = require('./Config/cloudinaryConfig');
 const exerciseRoutes = require('./Routes/exerciseRoutes');
+const workoutRoutes = require ('./Routes/workoutRoutes')
 const authRoutes = require('./Routes/authRoutes');
 const clientRoutes = require('./Routes/clientRoutes')
 const coachRoutes = require('./Routes/coachRoutes')
 const messageRoutes = require('./Routes/messageRoute')
 const collaboartionRoutes = require('./Routes/collaborationRoutes')
-const workoutRoutes = require('./Routes/workoutRoutes');
 const cloudinaryRoutes = require('./Routes/cloudinaryRoutes');
 const app = express();
 
@@ -40,8 +40,8 @@ app.use ('/coach' , coachRoutes);
 app.use ('/collab' , collaboartionRoutes);
 app.use ('/message' , messageRoutes);
 
-// app.use('/exercise', verifyToken, exerciseRoutes);
-// app.use('/workout', verifyToken, workoutRoutes);
+app.use('/exercise', exerciseRoutes);
+app.use('/workout', workoutRoutes);
 
 // Public routes
 app.use('/auth', authRoutes);

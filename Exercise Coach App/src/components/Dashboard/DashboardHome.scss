@@ -1,3 +1,9 @@
+$background-color: #1c1e21;
+$secondary-color: #fff;
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$accent-color: #bbf246;
 .dashboard-home-container {
   padding: 20px;
   background-color: #1f1f1f;
@@ -91,6 +97,62 @@
         background: #333;
         border-radius: 10px;
       }
+    }
+  }
+
+  .dashboard-button-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    .dashboard-flex {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      background-color: transparent;
+      border-radius: 14px;
+      padding: 12px;
+      width: 300px;
+      border: $accent-color 2px solid;
+
+      .search-icon {
+        color: $accent-color;
+        margin-right: 8px;
+      }
+
+      .search-input {
+        border: none;
+        outline: none;
+        background-color: transparent;
+        color: $accent-color;
+        flex-grow: 1;
+      }
+    }
+
+    .date-input {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background-color: transparent;
+      border: $accent-color 2px solid;
+      border-radius: 12px;
+      padding: 17px;
+      color: $accent-color;
+    }
+
+    .add-button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background-color: $accent-color;
+      color: $background-color;
+      border: $accent-color 2px solid;
+      border-radius: 12px;
+      padding: 17px;
     }
   }
 }

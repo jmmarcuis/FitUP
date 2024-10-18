@@ -1,24 +1,46 @@
 const axios = require('axios');
-const Exercise = require('../Models/exerciseModel');
 
-// Search for specific exercise
-exports.searchExercise = async (req, res) => {
-  const { name } = req.query;
-  const apiKey = process.env.API_NINJAS_KEY;
-  if (!name) {
-    return res.status(400).json({ error: 'Exercise name is required' });
-  }
+// Search for exercises based on a search term
+const searchExercises = async (req, res) => {
   try {
-    const response = await axios.get('https://api.api-ninjas.com/v1/exercises', {
-      params: { name: name },
-      headers: { 'X-Api-Key': apiKey }
+    const { term, language } = req.query;
+    // Make a request to the wger API search endpoint
+    const response = await axios.get('https://wger.de/api/v2/exercise/search/', {
+
+      params: {
+        language: language || 'en', // Default to English if language not provided
+        term       // Pass the search term from the query
+      }
     });
-    if (response.data.length === 0) {
-      return res.status(404).json({ message: 'No exercises found with that name' });
-    }
-    res.status(200).json(response.data);
+    
+    // Filter the suggestions to only include exercises with images
+    const filteredSuggestions = response.data.suggestions.filter(
+      suggestion => suggestion.data.image && suggestion.data.image_thumbnail
+    );
+
+    // Send back the filtered suggestions
+    res.json(filteredSuggestions);
   } catch (error) {
-    console.error('Error searching for exercise:', error);
-    res.status(500).json({ error: 'Error searching for exercise from external API' });
+    console.error(error);
+    res.status(500).json({ message: 'Failed to search exercises' });
   }
+};
+
+const getExerciseDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Make a request to the wger API to get exercise details
+    const response = await axios.get(`https://wger.de/api/v2/exerciseinfo/${id}/`);
+    
+    // Send back the exercise details
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch exercise details' });
+  }
+};
+
+module.exports = {
+  searchExercises,
+  getExerciseDetails,
 };

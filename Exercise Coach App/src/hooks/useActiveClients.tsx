@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 
- 
-
 interface ActiveClient {
   collaborationId: string;
   clientId: string;

@@ -1,28 +1,183 @@
-$primary-color: #fff5ea;
-$secondary-color: #0c0c0c;
-$text-color: #2f2f2f;
-$background-color: #f7f7f7;
-$background-color-v2: transparent;
-$button-background: #4a90e2;
-$button-hover-background: #357ab7;
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$background-color: #1c1e21;
+$accent-color: #bbf246;
 $button-text-color: #ffffff;
 
-.workout-list-empty{
-    height: 60vh;
-     margin-top: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
+
+.workout-list-empty {
+  height: 60vh;
+  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+
+  h2 {
+    color: $text-color;
+    font-size: 24px;
+  }
 }
 
-.add-workout-button{
-    background-color: transparent;
-      color: $text-color;
-      border: $text-color 2px solid;
+.add-workout-button {
+  background-color: transparent;
+  color: $text-color;
+  border: $text-color 2px solid;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $text-color;
+    color: $background-color;
+  }
+}
+
+.workouts-list {
+  background-color: $background-color;
+  height: 100%;
+  .exercise-lists-container {
+    margin-top: 20px;
+  }
+
+  .exercise-card {
+    background-color: rgba($secondary-color, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .workout-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .workout-left {
+      h2, h3 {
+        margin: 0;
+        color: $text-color;
+      }
+
+      span {
+        color: $accent-color;
+      }
+    }
+
+    .workout-right {
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: $accent-color;
+        color: $background-color;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: darken($accent-color, 10%);
+        }
+      }
+    }
+  }
+
+  .exercise-item {
+    margin-bottom: 30px;
+
+    .list-flex {
+      display: flex;
+      align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+      h4 {
+        font-size: 20px;
+        color: $text-color;
+        margin: 0;
+      }
+
+      .delete-button {
+        background-color: transparent;
+        color: $text-color;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #ff4d4d;
+        }
+      }
+    }
+
+    .exercise-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+
+      th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba($secondary-color, 0.2);
+      }
+
+      th {
+        color: $accent-color;
+        font-weight: bold;
+      }
+
+      td {
+        color: $text-color;
+      }
+
+      input[type="number"], input[type="checkbox"] {
+        width: 100%;
+        padding: 5px;
+        background-color: rgba($secondary-color, 0.1);
+        border: 1px solid rgba($secondary-color, 0.3);
+        border-radius: 3px;
+        color: $text-color;
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+      }
+    }
+
+    .add-set-button {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background-color: transparent;
+      color: $accent-color;
+      border: 1px solid $accent-color;
       border-radius: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 5px 10px;
+      font-size: 14px;
       cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba($accent-color, 0.1);
+      }
+    }
+  }
+}
+
+.loading, .error {
+  text-align: center;
+  margin-top: 20px;
+  color: $text-color;
+}
+
+.error {
+  color: #ff4d4d;
 }
