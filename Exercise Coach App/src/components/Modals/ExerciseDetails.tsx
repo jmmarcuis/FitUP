@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Modal from "react-modal";
 import "./ExerciseDetails.scss";
@@ -17,20 +17,18 @@ interface ExerciseDetailsModalProps {
   exercise: ExerciseDetails;
   isOpen: boolean;
   onRequestClose: () => void;
-  onExerciseAdded: (exerciseId: number, initialSets: number) => void; // Add this
+  onExerciseAdded: (exerciseId: number) => void;
 }
 
 export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
   exercise,
   isOpen,
   onRequestClose,
-  onExerciseAdded, // Destructure the function
+  onExerciseAdded,
 }) => {
-  const [initialSets, setInitialSets] = useState(3); // Allow user to specify sets
-
   const handleAddExercise = () => {
-    onExerciseAdded(exercise.id, initialSets); // Call the add function
-    onRequestClose(); // Close the modal after adding
+    onExerciseAdded(exercise.id);
+    onRequestClose();
   };
 
   return (
@@ -73,16 +71,11 @@ export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
         </p>
 
         <div className="add-exercise-form">
-          <label>
-            Initial number of sets:
-            <input
-              type="number"
-              value={initialSets}
-              onChange={(e) => setInitialSets(parseInt(e.target.value))}
-              min="1"
-            />
-          </label>
-          <button onClick={handleAddExercise}>Add Exercise to Workout</button> {/* Add button to trigger adding */}
+          <button onClick={handleAddExercise}>
+      
+            <Icon icon="material-symbols:add" />
+            Add Workout
+          </button>
         </div>
       </div>
     </Modal>

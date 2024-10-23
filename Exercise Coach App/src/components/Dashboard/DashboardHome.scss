@@ -8,7 +8,7 @@ $accent-color: #bbf246;
   padding: 20px;
   background-color: #1f1f1f;
   color: #ffffff;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 
@@ -104,8 +104,7 @@ $accent-color: #bbf246;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    .dashboard-flex {
+     .dashboard-flex {
       display: flex;
       gap: 10px;
     }

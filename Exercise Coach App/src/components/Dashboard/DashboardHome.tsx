@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./DashboardHome.scss";
-import useWorkoutsByDate from "../../hooks/useWorkoutsByDate";
-import useSelectedWorkout, { Workout } from "../../hooks/useSelectedWorkout";
-import useCoachDetails from "../../hooks/useCoachDetails";
-import { BarLoader } from "react-spinners";
+//Utilities
 import { getGreeting } from "../Utilities/Greeting";
+// Hooks
+import useWorkoutsByDate from "../../hooks/useWorkoutsByDate";
+import useSelectedWorkout from "../../hooks/useSelectedWorkout";
+import useCoachDetails from "../../hooks/useCoachDetails";
+import useDeleteWorkout from "../../hooks/Workout Management Hooks/useDeleteWorkout";
+//Third Party Libraries
+import { BarLoader } from "react-spinners";
 import { Icon } from "@iconify/react";
-import { ClientListModal } from "../Modals/DashboardModals/ClientListModal";
+import { ToastContainer, toast } from "react-toastify";
+//Interfaces
 import { ActiveClient } from "../../Types/ActiveClient";
+import { Workout } from "../../Types/Workout";
+//Modals and Other Components
 import CreateWorkoutModal from "../Modals/DashboardModals/CreateWorkoutModal";
-import WorkoutsList from "../workout components/WorkoutList";
+import { ClientListModal } from "../Modals/DashboardModals/ClientListModal";
 import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyDateModal";
+import { ConfirmationModal } from "../Modals/ConfirmationModal";
+import WorkoutsList from "../workout components/WorkoutList";
 
-  const DashboardHome: React.FC = () => {
+const DashboardHome: React.FC = () => {
   const { coachDetails, loading, error } = useCoachDetails();
+  const { deleteWorkout, isDeleting, deleteError } = useDeleteWorkout();
   const {
     workouts,
     loading: workoutsLoading,
@@ -30,6 +40,8 @@ import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyD
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [workoutToDelete, setWorkoutToDelete] = useState<string | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -54,7 +66,29 @@ import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyD
     closeWorkoutListModal();
   };
 
-  
+  useEffect(() => {
+    fetchWorkoutsByDate(selectedDate);
+  }, [selectedDate, fetchWorkoutsByDate]);
+
+  const handleDeleteWorkout = (workoutId: string) => {
+    setWorkoutToDelete(workoutId);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const confirmDeleteWorkout = async () => {
+    if (workoutToDelete) {
+      const success = await deleteWorkout(workoutToDelete);
+      if (success) {
+        toast.success('Workout Deleted Sucessfully');
+        fetchWorkoutsByDate(selectedDate);
+        if (selectedWorkout?._id === workoutToDelete) {
+          setSelectedWorkout(null);
+        }
+      }
+    }
+    setIsConfirmationModalOpen(false);
+    setWorkoutToDelete(null);
+  };
 
   return (
     <div className="dashboard-home-container">
@@ -88,6 +122,9 @@ import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyD
           <button className="add-button" onClick={openWorkoutListModal}>
             <Icon icon="ic:baseline-people" />
             Workouts
+            {workouts.length > 0 && (
+              <span className="workout-count">({workouts.length})</span>
+            )}
           </button>
           <button className="add-button" onClick={openModal}>
             <Icon icon="material-symbols:add" /> Create Workout
@@ -114,7 +151,18 @@ import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyD
         workouts={workouts}
         selectedDate={selectedDate}
         onWorkoutSelect={handleWorkoutSelect}
+        onDeleteWorkout={handleDeleteWorkout}
+        isDeleting={isDeleting}
       />
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+        onConfirm={confirmDeleteWorkout}
+        message="Are you sure you want to delete this workout?"
+      />
+      {deleteError && <div className="error-message">{deleteError}</div>}
+
       {selectedClient && (
         <CreateWorkoutModal
           isOpen={!!selectedClient}
@@ -122,6 +170,8 @@ import { WorkoutListbyDateModal } from "../Modals/DashboardModals/WorkoutListbyD
           client={selectedClient}
         />
       )}
+
+      <ToastContainer theme="dark" position="top-center" autoClose={3000} />
     </div>
   );
 };

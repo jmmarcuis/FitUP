@@ -2,10 +2,25 @@ const Workout = require('../Models/workoutModel');
 const Collaboration = require('../Models/CollaborationModel');
 const axios = require('axios');
 const moment = require('moment');
+const nodemailer = require('nodemailer');
 
 exports.createWorkout = async (req, res) => {
   try {
     const { name, description, date, collaborationId } = req.body;
+
+    // Check if a workout already exists for this client on this date
+    const existingWorkout = await Workout.findOne({
+      collaboration: collaborationId,
+      date: {
+        $gte: new Date(date).setHours(0, 0, 0, 0),
+        $lt: new Date(date).setHours(23, 59, 59, 999)
+      }
+    });
+
+    if (existingWorkout) {
+      return res.status(400).json({ message: 'A workout already exists for this client on this date.' });
+    }
+
     const workout = new Workout({
       name,
       description,
@@ -18,6 +33,35 @@ exports.createWorkout = async (req, res) => {
     
     await Collaboration.findByIdAndUpdate(collaborationId, {
       $push: { workouts: workout._id }
+    });
+
+    // Fetch client email
+    const collaboration = await Collaboration.findById(collaborationId).populate('client');
+    const clientEmail = collaboration.client.email;
+
+    // Send email notification
+    const transporter = nodemailer.createTransport({
+      // Configure your email service here
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: clientEmail,
+      subject: 'New Workout Assigned',
+      text: `A new workout "${name}" has been assigned to you for ${new Date(date).toDateString()}. Log in to your account to view the details.`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
     });
 
     res.status(201).json(workout);

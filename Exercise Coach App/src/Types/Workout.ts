@@ -4,7 +4,7 @@ export interface Workout {
   description: string;
   date: string;
   exercises: Array<{
-    exerciseId: string;
+    _id: string;
     name: string;
     sets: Array<{
       reps: number;
@@ -14,6 +14,7 @@ export interface Workout {
   }>;
   collaboration: {
     client: {
+      clientImage: string | undefined;
       firstName: string;
       lastName: string;
     };
@@ -27,14 +28,14 @@ export interface Set {
 }
 
 export interface Exercise {
-  exerciseId: string;
+  _id: string;
   name: string;
   sets: Set[];
 }
 
 export interface Client {
   firstName: string;
-  lastName: string;
+  clientImage: string;
 }
 
 export interface Collaboration {

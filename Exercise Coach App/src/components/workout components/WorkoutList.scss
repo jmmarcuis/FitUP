@@ -5,9 +5,7 @@ $background-color: #1c1e21;
 $accent-color: #bbf246;
 $button-text-color: #ffffff;
 
-
 .workout-list-empty {
-  height: 60vh;
   margin-top: 50px;
   display: flex;
   align-items: center;
@@ -20,7 +18,7 @@ $button-text-color: #ffffff;
     font-size: 24px;
   }
 }
-
+ 
 .add-workout-button {
   background-color: transparent;
   color: $text-color;
@@ -58,7 +56,8 @@ $button-text-color: #ffffff;
     margin-bottom: 20px;
 
     .workout-left {
-      h2, h3 {
+      h2,
+      h3 {
         margin: 0;
         color: $text-color;
       }
@@ -95,8 +94,8 @@ $button-text-color: #ffffff;
     .list-flex {
       display: flex;
       align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 10px;
 
       h4 {
         font-size: 20px;
@@ -104,17 +103,13 @@ $button-text-color: #ffffff;
         margin: 0;
       }
 
-      .delete-button {
+      .button {
         background-color: transparent;
         color: $text-color;
         border: none;
         cursor: pointer;
         font-size: 20px;
         transition: color 0.3s ease;
-
-        &:hover {
-          color: #ff4d4d;
-        }
       }
     }
 
@@ -123,7 +118,8 @@ $button-text-color: #ffffff;
       border-collapse: collapse;
       margin-bottom: 10px;
 
-      th, td {
+      th,
+      td {
         padding: 10px;
         text-align: left;
         border-bottom: 1px solid rgba($secondary-color, 0.2);
@@ -138,7 +134,8 @@ $button-text-color: #ffffff;
         color: $text-color;
       }
 
-      input[type="number"], input[type="checkbox"] {
+      input[type="number"],
+      input[type="checkbox"] {
         width: 100%;
         padding: 5px;
         background-color: rgba($secondary-color, 0.1);
@@ -172,7 +169,8 @@ $button-text-color: #ffffff;
   }
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   margin-top: 20px;
   color: $text-color;

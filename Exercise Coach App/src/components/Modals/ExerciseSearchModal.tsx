@@ -20,7 +20,7 @@ interface ExerciseSearchModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
   workoutId: string;
-  onExerciseAdded: (exerciseId: number, initialSets: number) => void;
+  onExerciseAdded: (exerciseId: number) => void;  
 }
 
 export const ExerciseSearchModal: React.FC<ExerciseSearchModalProps> = ({
@@ -29,8 +29,10 @@ export const ExerciseSearchModal: React.FC<ExerciseSearchModalProps> = ({
   onExerciseAdded,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedExercise, setSelectedExercise] = useState<ExerciseDetails | null>(null);
-   const { exercises, loading, error, searchExercises, getExerciseDetails } = useExerciseSearch();
+  const [selectedExercise, setSelectedExercise] =
+    useState<ExerciseDetails | null>(null);
+  const { exercises, loading, error, searchExercises, getExerciseDetails } =
+    useExerciseSearch();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,8 +56,6 @@ export const ExerciseSearchModal: React.FC<ExerciseSearchModalProps> = ({
       console.error(err);
     }
   };
-
- 
 
   return (
     <Modal
@@ -86,29 +86,35 @@ export const ExerciseSearchModal: React.FC<ExerciseSearchModalProps> = ({
           <li key={exercise.data.id}>
             <div className="exercise-image">
               {exercise.data.image ? (
-                <img src={`https://wger.de${exercise.data.image}`} alt={exercise.value} />
+                <img
+                  src={`https://wger.de${exercise.data.image}`}
+                  alt={exercise.value}
+                />
               ) : (
                 <div className="placeholder-image">No image</div>
               )}
             </div>
             <div className="exercise-info">
               <span className="exercise-name">{exercise.value}</span>
-              <span className="exercise-category">{exercise.data.category}</span>
+              <span className="exercise-category">
+                {exercise.data.category}
+              </span>
             </div>
-            <Icon icon="mdi:information" onClick={() => handleExerciseSelect(exercise.data.id)} />
+            <Icon
+              icon="mdi:information"
+              onClick={() => handleExerciseSelect(exercise.data.id)}
+            />
           </li>
         ))}
       </ul>
       {selectedExercise && (
-  <ExerciseDetailsModal
-    exercise={selectedExercise}
-    isOpen={!!selectedExercise}
-    onRequestClose={() => setSelectedExercise(null)}
-    onExerciseAdded={onExerciseAdded}  
-  />
-)}
-
-       
+        <ExerciseDetailsModal
+          exercise={selectedExercise}
+          isOpen={!!selectedExercise}
+          onRequestClose={() => setSelectedExercise(null)}
+          onExerciseAdded={onExerciseAdded}
+        />
+      )}
     </Modal>
   );
 };

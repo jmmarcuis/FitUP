@@ -1,0 +1,73 @@
+$primary-color: #ffffff;
+$secondary-color: #0c0c0c;
+$highlight-color: #bbf246;
+$tertiary-color: #da2b2b;
+$background-color: #1c1e21;
+
+ .set-detail-modal-content {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: $background-color;
+  color: $primary-color;
+  width: 470px;
+  max-width: 100%;
+  text-align: center;
+  
+    h2 {
+      margin-bottom: 1.5rem;
+      color: $highlight-color;
+      text-align: center;
+    }
+  
+    .input-container {
+      margin-bottom: 1.5rem;
+      
+      input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #444;
+        border-radius: 4px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        
+        &:focus {
+          outline: none;
+          border-color: #666;
+        }
+      }
+    }
+  
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+  
+      button {
+        flex: 1;
+        width: 120px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        background-color: $highlight-color;
+        color: $secondary-color;
+        cursor: pointer;
+        margin-bottom: 10px;
+        font-size: 16px;
+  
+        &.confirm-button {
+          background-color:$highlight-color;
+          color: $secondary-color;
+  
+        }
+  
+        &.cancel-button {
+          background-color: $tertiary-color;
+          color: $secondary-color;
+       
+        }
+      }
+    }
+  }
+ 
