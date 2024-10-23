@@ -18,6 +18,11 @@ export interface Workout {
       firstName: string;
       lastName: string;
     };
+    coach: {
+      profilePicture: string | undefined;
+      firstName: string;
+      lastName: string;
+    };
   };
 }
 
@@ -41,4 +46,3 @@ export interface Client {
 export interface Collaboration {
   client: Client;
 }
-

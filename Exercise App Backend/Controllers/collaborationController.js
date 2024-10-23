@@ -354,3 +354,40 @@ exports.getClientCounts = async (req, res) => {
     res.status(500).json({ message: "Error fetching client counts", error: error.message });
   }
 };
+
+exports.getAssignedCoach = async (req, res) => {
+  try {
+    // Get client ID from authenticated user
+    const clientId = req.user._id;
+
+    // Find active collaboration for the client and populate coach details
+    const collaboration = await Collaboration.findOne({
+      client: clientId,
+      status: 'active'
+    }).populate('coach', 'firstName lastName email profilePicture');
+
+    if (!collaboration) {
+      return res.status(404).json({
+        success: false,
+        message: 'No active coach assignment found'
+      });
+    }
+
+    // Return coach details
+    res.status(200).json({
+      success: true,
+      coach: {
+        firstName: collaboration.coach.firstName,
+        lastName: collaboration.coach.lastName,
+        email: collaboration.coach.email,
+        profilePicture: collaboration.coach.profilePicture
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching assigned coach:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch assigned coach'
+    });
+  }
+};

@@ -1,8 +1,9 @@
 const Workout = require('../Models/workoutModel');
 const Collaboration = require('../Models/CollaborationModel');
-const axios = require('axios');
+ const axios = require('axios');
 const moment = require('moment');
 const nodemailer = require('nodemailer');
+const mongoose = require("mongoose");
 
 exports.createWorkout = async (req, res) => {
   try {
@@ -113,6 +114,74 @@ exports.getWorkoutsByDate = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+exports.getClientWorkoutByDate = async (req, res) => {
+  try {
+    const { date } = req.query;
+    const clientId = req.user._id;
+
+    // Create start and end of the selected date in UTC
+    const startDate = new Date(date);
+    startDate.setUTCHours(0, 0, 0, 0);
+    
+    const endDate = new Date(date);
+    endDate.setUTCHours(23, 59, 59, 999);
+
+    console.log('Searching for workout between:', startDate, 'and', endDate);
+    console.log('Client ID:', clientId);
+
+    // First, find the client's collaboration
+    const collaboration = await mongoose.model('Collaboration').findOne({
+      client: clientId,
+      status: 'active'
+    });
+
+    if (!collaboration) {
+      return res.status(404).json({
+        success: false,
+        message: 'No active collaboration found for this client'
+      });
+    }
+
+    // Then find workout using date range and collaboration ID
+    const workout = await Workout.findOne({
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      },
+      collaboration: collaboration._id
+    })
+    .populate({
+      path: 'collaboration',
+      populate: {
+        path: 'coach',
+        select: 'firstName lastName profilePicture'
+      }
+    })
+    .populate('exercises');
+
+    console.log('Found workout:', workout);  
+
+    if (!workout) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'No workout found for this date' 
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: workout
+    });
+  } catch (error) {
+    console.error('Error in getClientWorkoutByDate:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching workout',
       error: error.message
     });
   }

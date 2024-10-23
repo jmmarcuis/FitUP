@@ -10,6 +10,8 @@ router.get('/collaborations/pending', verifyToken, isCoach, collaborationControl
 router.post('/collaborations/:id/finish', verifyToken, isCoach, collaborationController.finishCollaboration);
 router.get('/coach/active-clients', verifyToken, isCoach, collaborationController.getActiveClients);
 
+router.get('/client/assigned-coach' , verifyToken, collaborationController.getAssignedCoach)
+
 router.get('/coach/active-clients-count', verifyToken, isCoach, collaborationController.getActiveClientsCount);
 router.get('/coach/pending-clients-count', verifyToken, isCoach, collaborationController.getPendingRequestsCount);
 router.get('/coach/clients-counts', verifyToken, isCoach, collaborationController.getClientCounts);

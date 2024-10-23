@@ -1,113 +1,158 @@
-// import React, { useState } from "react";
-// import ReactModal from "react-modal";
-// import { useWorkout } from "../../hooks/useWorkout";
-// import { motion } from "framer-motion";
-// import { ExerciseTitleModal } from "./Modals/ExerciseTitleModal";
-// import "./WorkoutList.scss";
+// WorkoutList.tsx
+import React, { useState } from "react";
+import "./WorkoutList.scss";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Icon } from "@iconify/react/dist/iconify.js";
+// import useExerciseDetails from "../../hooks/useExerciseDetails";
+import ExerciseDetailsModal from "../Modals/ExerciseDetailsModal";
+interface WorkoutSet {
+  reps: number;
+  weight: number;
+  RPE: number;
+}
 
-// ReactModal.setAppElement("#root");
+interface Exercise {
+  exerciseId: string; 
+  name: string;
+  sets: WorkoutSet[];
+}
 
-// const WorkoutsList: React.FC = () => {
-//   const { workouts, error, addSetToExercise } = useWorkout();
-//   const [isModalOpen, setIsModalOpen] = useState(false);
+interface Coach {
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+}
 
-//   const handleOpenModal = () => {
-//     setIsModalOpen(true);
-//   };
+interface Workout {
+  _id: string;
+  name: string;
+  description: string;
+  exercises: Exercise[];
+  collaboration: {
+    coach: Coach;
+    client: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+}
 
-//   const handleCloseModal = () => {
-//     setIsModalOpen(false);
-//   };
+interface WorkoutsListProps {
+  workouts: Workout[];
+}
 
-//   const handleSetCompletion = async (
-//     workoutId: string,
-//     exerciseIndex: number,
-//     setIndex: number,
-//     completed: boolean
-//   ) => {
-//     try {
-//       const workout = workouts.find((w) => w._id === workoutId);
-//       if (workout) {
-//         const set = {
-//           ...workout.exercises[exerciseIndex].sets[setIndex],
-//           completed,
-//         };
-//         await addSetToExercise(workoutId, exerciseIndex, set);
-//       }
-//     } catch (error) {
-//       console.error("Error updating set completion:", error);
-//      }
-//   };
+const WorkoutsList: React.FC<WorkoutsListProps> = ({ workouts }) => {
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
+    null
+  );
 
-//   return (
-//     <div className="workouts-list">
-//       {error && <p className="error-message">{error}</p>}
-//       {workouts.length > 0 ? (
-//         <ul>
-//           {workouts.map((workout) => (
-//             <h4 key={workout._id}>
-//               <h1>{workout.title}</h1>
-//               <div className="exercise-lists-container">
-//                 {workout.exercises.map((exercise, exerciseIndex) => (
-//                   <div key={exerciseIndex} className="exercise-card">
-//                     <h2>{exercise.exercise.name}</h2>
-//                     <table className="exercise-table">
-//                       <thead>
-//                         <tr>
-//                           <th>Set</th>
-//                           <th>kg</th>
-//                           <th>Reps</th>
-//                           <th>RPE</th>
-//                           <th>Done</th>
-//                         </tr>
-//                       </thead>
-//                       <tbody>
-//                         {exercise.sets.map((set, setIndex) => (
-//                           <tr key={setIndex}>
-//                             <td>{setIndex + 1}</td>
-//                             <td>{set.weight}</td>
-//                             <td>{set.reps}</td>
-//                             <td>{set.rpe}</td>
-//                             <td>
-//                               <input
-//                                 type="checkbox"
-//                                 checked={set.completed}
-//                                 onChange={() =>
-//                                   handleSetCompletion(
-//                                     workout._id,
-//                                     exerciseIndex,
-//                                     setIndex,
-//                                     !set.completed
-//                                   )
-//                                 }
-//                               />
-//                             </td>
-//                           </tr>
-//                         ))}
-//                       </tbody>
-//                     </table>
-//                   </div>
-//                 ))}
-//               </div>
-//             </h4>
-//           ))}
-//         </ul>
-//       ) : (
-//         <div className="workout-list-empty">
-//           <h2>No workouts</h2>
-//           <motion.button
-//             className="add-workout-button"
-//             onClick={handleOpenModal}
-//             whileHover={{ scale: 1.1 }}
-//             whileTap={{ scale: 0.9 }}
-//           >
-//             Add Workout
-//           </motion.button>
-//         </div>
-//       )}
-//       <ExerciseTitleModal isOpen={isModalOpen} onClose={handleCloseModal} />
-//     </div>
-//   );
-// };
+  if (!workouts || workouts.length === 0) {
+    return (
+      <div className="workout-list-empty">
+        <h2>No workouts found for this date</h2>
+      </div>
+    );
+  }
 
-// export default WorkoutsList;
+  return (
+    <>
+      <div className="workouts-list">
+        {workouts.map((workout) => (
+          <div key={workout._id} className="exercise-lists-container">
+            <div className="exercise-card">
+              <div className="workout-header">
+                <div className="workout-info">
+                  <div className="workout-info-left">
+                    <h2>
+                      Workout Title:{" "}
+                      <span>{workout.name || "Untitled Workout"}</span>{" "}
+                    </h2>
+                    <h2>
+                      Created By:{" "}
+                      <span>
+                        {`${workout.collaboration.coach.firstName} ${workout.collaboration.coach.lastName}`}
+                      </span>{" "}
+                    </h2>
+                  </div>
+                  <div className="workout-info-right">
+                    <button>
+                      <Icon icon="material-symbols:timer-outline" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="exercises-container">
+                {workout.exercises.map((exercise, index) => (
+                  <div key={index} className="exercise-item">
+                    <div className="exercise-header">
+                      <h3>{exercise.name || `Exercise ${index + 1}`}</h3>{" "}
+                      <Icon
+                        icon="mdi:information-outline"
+                        onClick={() =>
+                          setSelectedExerciseId(exercise.exerciseId)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                    </div>
+                    <div className="exercise-content">
+                      <table className="exercise-table">
+                        <thead>
+                          <tr>
+                            <th>Set</th>
+                            <th>Weight (kg)</th>
+                            <th>Reps</th>
+                            <th>RPE</th>
+                            <th>
+                              <Icon icon="material-symbols:check-box" />
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {exercise.sets
+                            .filter((set) => set !== null)
+                            .map((set, setIndex) => (
+                              <tr key={setIndex}>
+                                <td className="set-number">{setIndex + 1}</td>
+                                <td>
+                                  <div className="value-display">
+                                    {set?.weight ?? 0}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="value-display">
+                                    {set?.reps ?? 0}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="value-display">
+                                    {set?.RPE ?? 0}
+                                  </div>
+                                </td>
+                                <td>
+                                  <input type="checkbox" />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <ExerciseDetailsModal
+        exerciseId={selectedExerciseId}
+        isOpen={!!selectedExerciseId}
+        onClose={() => setSelectedExerciseId(null)}
+      />
+      <ToastContainer />
+    </>
+  );
+};
+
+export default WorkoutsList;

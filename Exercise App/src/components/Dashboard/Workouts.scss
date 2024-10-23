@@ -1,3 +1,11 @@
+$background-color: #1c1e21;
+$secondary-color: #fff;
+$primary-color: #1c1e21;
+$secondary-color: #d4d4d4;
+$text-color: #ffffff;
+$accent-color: #bbf246;
+
+
 main {
   background-color: #1f1f1f;
   height: 100vh;
@@ -14,32 +22,19 @@ main {
   height: 100%;
   color: #ffffff;
 
-  .workout-flex {
-    padding: 20px 3%;
+  .dashboard-button-flex {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-    overflow: hidden;
-    padding-bottom: 110vh;
+    justify-content: space-between;
+  }
+
+  .date-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: transparent;
+    border: $accent-color 2px solid;
+    border-radius: 12px;
+    padding: 17px;
+    color: $accent-color;
   }
 }
-
-.start-workout-btn {
-  background-color: transparent;
-  border: 2px solid #bbf246;
-  color: #ffffff;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s, color 0.3s;
-
-  &:hover {
-    background-color: #bbf246;
-    color: #1f1f1f;
-  }
-}
-
-

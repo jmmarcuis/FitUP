@@ -6,6 +6,7 @@ const { verifyToken, isCoach } = require('../Middleware/authMiddleware');
 router.post('/', verifyToken, isCoach, workoutController.createWorkout);
 router.get('/collaboration/:collaborationId', verifyToken, workoutController.getWorkouts);
 router.get('/by-date/:date', verifyToken, isCoach, workoutController.getWorkoutsByDate);
+router.get('/client-workout', verifyToken, workoutController.getClientWorkoutByDate);
 router.put('/:workoutId', verifyToken, isCoach, workoutController.updateWorkout);
 router.delete('/:workoutId', verifyToken, isCoach, workoutController.deleteWorkout);
 
