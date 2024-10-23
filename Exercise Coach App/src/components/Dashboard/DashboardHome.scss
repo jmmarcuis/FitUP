@@ -4,6 +4,29 @@ $primary-color: #1c1e21;
 $secondary-color: #d4d4d4;
 $text-color: #ffffff;
 $accent-color: #bbf246;
+
+// keep this to prevent having the white bg 
+// if WorkoutCardDB is opened/extended :)
+main{
+  background-color: #1c1e21;
+  overflow: hidden;
+
+  // scrollbar style
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #919191;
+    border-radius: 18px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #333;
+    border-radius: 18px;
+  }
+}
+
 .dashboard-home-container {
   padding: 20px;
   background-color: #1f1f1f;

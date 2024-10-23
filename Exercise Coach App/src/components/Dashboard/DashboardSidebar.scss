@@ -11,6 +11,40 @@
   .dashboard-logo {
     text-align: center;
     margin-bottom: 2rem;
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+
+      .logo-image {
+        width: 45px;
+        height: auto;
+        transition: transform 0.5s ease;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-family: "Helvetica", sans-serif;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      &:hover {
+        color: #a2d13d;
+        
+        .logo-image {
+          transform: scale(1.3); 
+        }
+
+        h1 {
+          color: #a2d13d;
+        }
+      }
+    }
   }
 
   nav {
@@ -30,74 +64,109 @@
         display: flex;
         align-items: center;
         height: 60px;
-        
+        margin-bottom: 0.5rem;
+
         &:last-child {
-          margin-top: auto; // Pushes the last item (logout) to the bottom
+          margin-top: auto;
         }
 
-        .dashboard-link-flex {
+        a {
+          text-decoration: none;
+          width:80%;
+        }  
+
+        button {
           display: flex;
           align-items: center;
           gap: 10px;
-          width: 100%; // Ensures full width for alignment
+          width: 100%;
+          height: 50px;
+          background-color: transparent;
+          border: none;
+          color: #B3B3B3;
+          padding: 0 15px;
+          cursor: pointer;
+          border-radius: 15px;
+          transition: background-color 0.4s ease, color 0.4s ease;
 
-          a,
-          button {
-            color: #adaaaa;
-            display: flex;
-            text-decoration: none;
-            justify-content: center;
-            align-items: center;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 20%;
-            background: none;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
+          &:hover {
+            color: #ffffff;
+            background-color: #3E4C59;
+          }
 
-            &:hover {
-              color: #fff;
-              background-color: #b3c73a;
-            }
+          &.active {
+            color: #ffffff;
+            background-color: #9dca3b;
+          }
 
-            &.active {
-              color: #fff;
-              background-color: #bbf246;
-            }
+          .iconify {
+            font-size: 24px;
+          }
 
-            .iconify {
-              font-size: 20px;
-            }
+          h3 {
+            font-size: 17px;
+            margin: 0;
+            color: inherit;
+            font-weight: 500;
+            font-family: Helvetica;
           }
         }
       }
     }
   }
 
-  .coach-info-flex {
+  .coach-section,
+  .error-section {
     display: flex;
-    gap: 10px;
+    justify-content: space-between; /* Ensures the logout button is pushed to the right */
     align-items: center;
+    width: 100%;
 
-    img {
-      max-width: 50px;
-      max-height: 50px;
-      border-radius: 10px;
+    .coach-info {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+
+      img {
+        max-width: 50px;
+        max-height: 50px;
+        border-radius: 10px;
+      }
+
+      .coach-text-info {
+        display: flex;
+        flex-direction: column;
+
+        h4 {
+          font-size: 14px;
+        }
+
+        p {
+          font-size: 12px;
+        }
+      }
     }
 
-    h4 {
-      font-size: 14px;
+    .error-message {
+      color: red; /* Error message styling */
     }
 
-    p {
-      font-size: 12px;
+    .logout-button {
+      background-color: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &:hover {
+        color: #ff4c4c; /* Hover effect */
+      }
+
+      .iconify {
+        font-size: 24px;
+      }
     }
-  }
-  
-  .error-message {
-    color: red; // Added error styling
   }
 }
-
- 

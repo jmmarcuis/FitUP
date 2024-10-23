@@ -4,13 +4,23 @@ import { Icon } from "@iconify/react";
 import "./DashboardSidebar.scss";
 import useCoachDetails from "../../hooks/useCoachDetails";
 import { BarLoader } from "react-spinners";
+import logo from "../../assets/logo/logo2.jpg";
 
 const DashboardSidebar: React.FC = () => {
   const navigate = useNavigate();
 
-  const [activeItem, setActiveItem] = useState("home");
+  // Retrieve the active item from localStorage, or default to "home"
+  const initialActiveItem = localStorage.getItem("activeItem") || "home";
+  const [activeItem, setActiveItem] = useState(initialActiveItem);
+
   const handleItemClick = (item: string) => {
     setActiveItem(item);
+    // Store the active item in localStorage
+    localStorage.setItem("activeItem", item);
+  };
+
+  const handleLogoClick = () => {
+    handleItemClick("home"); // Set active item to home
   };
 
   const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,81 +33,82 @@ const DashboardSidebar: React.FC = () => {
 
   return (
     <aside className="dashboard-sidebar">
-      <div className="dashboard-logo">{/* Logo */}</div>
+      <div className="dashboard-logo">
+        <Link to="/dashboard" className="logo-link" onClick={handleLogoClick}>
+          <img src={logo} alt="PowerSync Logo" className="logo-image" />
+          <h1>PowerSync</h1>
+        </Link>
+      </div>
       <nav>
         <ul>
           <li>
-            <div className="dashboard-link-flex">
-              <Link to="/dashboard">
-                <a
-                  className={activeItem === "home" ? "active" : ""}
-                  onClick={() => handleItemClick("home")}
-                >
-                  <Icon icon="material-symbols:dashboard" /> 
-                </a>
-              </Link>
-              <h3>Dashboard</h3>
-            </div>
-          </li>
-          <li>
-            <div className="dashboard-link-flex">
-              <Link to="/dashboard/clients">
-                <a
-                  className={activeItem === "client" ? "active" : ""}
-                  onClick={() => handleItemClick("client")}
-                >
-                  <Icon icon="ic:baseline-people" />
-                </a>
-              </Link>
-              <h3>Clients</h3>
-            </div>
-          </li>
-          <li>
-            <div className="dashboard-link-flex">
-              <Link to="/dashboard/messages">
-                <a
-                  className={activeItem === "messages" ? "active" : ""}
-                  onClick={() => handleItemClick("messages")}
-                >
-                  <Icon icon="mdi:message" />
-                </a>
-              </Link>
-              <h3>Messages</h3>
-            </div>
+            <Link to="/dashboard">
+              <button
+                className={activeItem === "home" ? "active" : ""}
+                onClick={() => handleItemClick("home")}
+              >
+                <Icon icon="material-symbols:dashboard" />
+                <h3>Dashboard</h3>
+              </button>
+            </Link>
           </li>
 
           <li>
-            <div className="dashboard-link-flex">
-              <Link to="/dashboard/settings">
-                <a
-                  className={activeItem === "settings" ? "active" : ""}
-                  onClick={() => handleItemClick("settings")}
-                >
-                  <Icon icon="mdi:cog" />
-                </a>
-              </Link>
-              <h3>Settings</h3>
-            </div>
+            <Link to="/dashboard/clients">
+              <button
+                className={activeItem === "client" ? "active" : ""}
+                onClick={() => handleItemClick("client")}
+              >
+                <Icon icon="ic:baseline-people" />
+                <h3>Clients</h3>
+              </button>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/dashboard/messages">
+              <button
+                className={activeItem === "messages" ? "active" : ""}
+                onClick={() => handleItemClick("messages")}
+              >
+                <Icon icon="mdi:message" />
+                <h3>Messages</h3>
+              </button>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/dashboard/settings">
+              <button
+                className={activeItem === "settings" ? "active" : ""}
+                onClick={() => handleItemClick("settings")}
+              >
+                <Icon icon="mdi:cog" />
+                <h3>Settings</h3>
+              </button>
+            </Link>
           </li>
 
           <li>
             {loading ? (
               <BarLoader color="#ffffff" loading={true} width={300} />
-            ) : error || !coachDetails ? ( // Check if coachDetails is null
-              <div className="error-message">
-                Failed to load Coach details.
-                <button onClick={handleLogout}>
+            ) : error || !coachDetails ? (
+              <div className="error-section">
+                <div className="error-message">
+                  <p>Failed to load Coach details.</p>
+                </div>
+                <button className="logout-button" onClick={handleLogout}>
                   <Icon icon="mdi:logout" />
                 </button>
               </div>
             ) : (
-              <div className="dashboard-link-flex">
-                <div className="coach-info-flex">
+              <div className="coach-section">
+                <div className="coach-info">
                   <img
                     src={coachDetails.profilePicture}
                     alt={`${coachDetails.firstName} ${coachDetails.lastName}`}
                   />
-                  <div className="coach-info">
+                  <div className="coach-text-info">
                     <h4>
                       {coachDetails.firstName} {coachDetails.lastName}
                     </h4>
@@ -105,7 +116,7 @@ const DashboardSidebar: React.FC = () => {
                     <p>{coachDetails.email}</p>
                   </div>
                 </div>
-                <button onClick={handleLogout}>
+                <button className="logout-button" onClick={handleLogout}>
                   <Icon icon="mdi:logout" />
                 </button>
               </div>
