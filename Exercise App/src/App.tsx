@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,34 +17,37 @@ import "./App.scss";
 import { AnimatePresence } from "framer-motion";
 
 const App: React.FC = () => {
-  return (
+  useEffect(() => {
+    document.title = "PowerSync Client"; // Set the document title here
+  }, []);
 
-      <WorkoutProvider>
-        <ResponsiveProvider>
-          <SearchProvider>
-            <Router>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<Homepage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route
-                    path="/dashboard/*"
-                    element={
-                      <ProtectedRoute
-                        element={<DashboardPage />}
-                        requireProfileCompletion={true}
-                      />
-                    }
-                  />
-                  {/* Redirect any unmatched routes to homepage */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </AnimatePresence>
-            </Router>
-          </SearchProvider>
-        </ResponsiveProvider>
-      </WorkoutProvider>
+  return (
+    <WorkoutProvider>
+      <ResponsiveProvider>
+        <SearchProvider>
+          <Router>
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/dashboard/*"
+                  element={
+                    <ProtectedRoute
+                      element={<DashboardPage />}
+                      requireProfileCompletion={true}
+                    />
+                  }
+                />
+                {/* Redirect any unmatched routes to homepage */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </AnimatePresence>
+          </Router>
+        </SearchProvider>
+      </ResponsiveProvider>
+    </WorkoutProvider>
   );
 };
 

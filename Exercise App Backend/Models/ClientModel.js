@@ -14,7 +14,8 @@ const ClientSchema = new Schema({
   isVerified: { type: Boolean, default: false },
   otp: { type: String },
   otpExpires: { type: Date },
-  clientImage: { type: String, default: 'https://res.cloudinary.com/drf4qnjow/image/upload/v1728341592/profile_pictures/placeholder.jpg'}  
+  clientImage: { type: String, default: 'https://res.cloudinary.com/drf4qnjow/image/upload/v1728341592/profile_pictures/placeholder.jpg'},
+  collaborations: [{ type: Schema.Types.ObjectId, ref: 'Collaboration' }]
 });
 
 // Hash the password before saving the user model
@@ -43,4 +44,4 @@ ClientSchema.pre('save', async function(next) {
   };
   
 
-module.exports = mongoose.model('Client', ClientSchema);
+  module.exports = mongoose.models.Client || mongoose.model('Client', ClientSchema);

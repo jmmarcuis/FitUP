@@ -17,10 +17,10 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <ReactModal
-      className="confirmation-modal-content"
-      overlayClassName="modal-overlay"
       isOpen={isOpen}
       onRequestClose={onClose}
+      className="confirmation-modal-content"
+      overlayClassName="modal-overlay"
     >
       <h2>Confirmation</h2>
       <p>{message}</p>

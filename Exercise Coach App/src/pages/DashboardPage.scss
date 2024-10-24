@@ -1,0 +1,24 @@
+// DashboardPage.scss
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  &.mobile {
+    .dashboard-content {
+      flex-direction: column;
+    }
+  }
+
+  .dashboard-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+}

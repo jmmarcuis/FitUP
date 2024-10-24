@@ -2,46 +2,51 @@ import React from "react";
 import CoachCard from "../Cards/CoachCard";
 import { Icon } from "@iconify/react";
 import "./CoachModal.scss";
+import { Coach } from "../../interfaces/Coach";
+import Modal from "react-modal";
 
-interface Coach {
-  image: string;
-  name: string;
-  title: string;
-}
+Modal.setAppElement("#root");
 
 interface CoachModalProps {
-  coach: Coach[];
+  isOpen: boolean;
+  coaches: Coach[];
   onClose: () => void;
-  onSelectTrainer: (trainer: Coach) => void;
+  onCoachClick: (coach: Coach) => void;
 }
 
 const CoachModal: React.FC<CoachModalProps> = ({
-  coach,
+  isOpen,
+  coaches,
   onClose,
-  onSelectTrainer,
+  onCoachClick,
 }) => {
+  if (!isOpen) return null;
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <button className="back-button" onClick={onClose} aria-label="Back">
-            <Icon icon="mdi:arrow-left" />
-          </button>
-          <h2>Choose Your Fitness Trainer</h2>
-        </div>
-        <div className="coach-grid">
-          {coach.map((coach, index) => (
-            <CoachCard
-              key={index}
-              image={coach.image}
-              name={coach.name}
-              title={coach.title}
-              onClick={() => onSelectTrainer(coach)}
-            />
-          ))}
-        </div>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Coach Details"
+      overlayClassName="modal-overlay"
+      className="coachlist-modal"
+    >
+      <div className="modal-header">
+        <button className="back-button" onClick={onClose} aria-label="Back">
+          <Icon icon="mdi:arrow-left" />
+        </button>
+        <h2>Choose Your Fitness Trainer</h2>
       </div>
-    </div>
+      <div className="coach-grid">
+        {coaches.map((coach) => (
+          <CoachCard
+            key={coach._id}
+            coach={coach}
+            onClick={() => onCoachClick(coach)}
+            loading={false}
+          />
+        ))}
+      </div>
+    </Modal>
   );
 };
 

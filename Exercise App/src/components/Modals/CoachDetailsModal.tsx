@@ -1,38 +1,65 @@
 import React from "react";
+import Modal from "react-modal";
 import { Icon } from "@iconify/react";
 import "./CoachDetailsModal.scss";
+import { Coach } from "../../interfaces/Coach";
+Modal.setAppElement("#root");
 
 interface CoachDetailsModalProps {
-  image: string;
-  name: string;
-  description: string;
+  isOpen: boolean;
+  coach: Coach | null;
   onClose: () => void;
+  onCollaborate: (coachId: string) => void;
+  collaborationLoading: boolean;
 }
 
 const CoachDetailsModal: React.FC<CoachDetailsModalProps> = ({
-  image,
-  name,
-  description,
+  isOpen,
+  coach,
   onClose,
+  onCollaborate,
+  collaborationLoading,
 }) => {
+  if (!isOpen || !coach) return null;
+
   return (
-    <div className="modal-overlay">
-      <div className="coach-modal">
-        <button className="back-button" onClick={onClose} aria-label="Back">
-          <Icon icon="mdi:arrow-left" />
-        </button>
-
-        <div className="image-container">
-          <img src={image} alt={name} className="coach-image" />
-        </div>
-
-        <div className="coach-info">
-          <h4>{name}</h4>
-          <p>{description}</p>
-          <button className="collaborate-button">Collaborate</button>
-        </div>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Coach Details"
+      className="coach-modal"
+      overlayClassName="modal-overlay"
+    >
+      <button className="back-button" onClick={onClose} aria-label="Back">
+        <Icon icon="mdi:arrow-left" />
+      </button>
+      <div className="image-container">
+        <img
+          src={coach.profilePicture}
+          alt={`${coach.firstName} ${coach.lastName}`}
+          className="coach-image"
+        />
       </div>
-    </div>
+      <div className="coach-info">
+        <h4>{`${coach.firstName} ${coach.lastName}`}</h4>
+        <p>
+          <strong>Specialization:</strong> {coach.coachSpecialization}
+        </p>
+        <p>
+          <strong>Email:</strong> {coach.email}
+        </p>
+        <p>
+          <strong>Description:</strong> {coach.coachDescription}
+        </p>
+        <button
+          className="collaborate-button"
+          onClick={() => onCollaborate(coach._id)}
+          disabled={collaborationLoading}
+        >
+          {collaborationLoading ? "Requesting..." : "Request Collaboration"}
+        </button>
+      </div>
+    </Modal>
   );
 };
 
