@@ -116,8 +116,9 @@ const DashboardSidebar: React.FC = () => {
                     <p>{coachDetails.email}</p>
                   </div>
                 </div>
+                {/* Move the logout button here */}
                 <button className="logout-button" onClick={handleLogout}>
-                  <Icon icon="mdi:logout" />
+                  <Icon icon="mdi:logout" />Logout
                 </button>
               </div>
             )}

@@ -2,13 +2,45 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 2rem;
   background-color: #1c1e21;
   color: #ffffff;
   margin: 0;
 
+  .messages-layout {
+    display: flex;
+    flex: 1;
+    height: 100vh;
+  }
+
+  .contacts-sidebar {
+    flex: 0 0 300px;
+  }
+
+  .messages-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .toggle-sidebar-button {
+    background-color: #3e4c59;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem; // Add some spacing below
+    transition: background-color 0.3s ease;
+    z-index: 2;
+
+    &:hover {
+      background-color: #bbf246;
+    }
+  }
+
   .messages-header {
     margin-bottom: 0.5rem;
+
     h2 {
       font-size: 1.5rem;
       font-weight: bold;
@@ -16,13 +48,14 @@
   }
 
   .coach-desc {
-    width: 45%;
+    width: 100%;
     display: flex;
     align-items: center;
     background-color: #1c1e21;
     padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 8px 6px rgba(0, 0, 0, 0.45);
+    z-index: 5;
 
     img {
       border-radius: 50%;
@@ -58,40 +91,57 @@
   .chat-area {
     flex: 1;
     overflow-y: auto;
-    padding-right: 10px;
-    margin-bottom: 1rem;
+    padding: 1rem 2.5rem;
     display: flex;
     scroll-snap-type: y mandatory;
     flex-direction: column-reverse;
 
+    // custom scrollbar
     &::-webkit-scrollbar {
-      width: 0px;
+      width: 12px; // Width of the scrollbar
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #333; // Background of the scrollbar track
+      border-radius: 10px; // Rounded corners for the track
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #919191; // Color of the scrollbar thumb
+      border-radius: 10px; // Rounded corners for the thumb
+      border: 1px solid #333; // Border around the thumb
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #a1b49f;
     }
 
     .message-bubble {
       max-width: 60%;
       word-wrap: break-word;
-      padding: 0.7rem 1.5rem;
+      padding: 0.55rem 1rem;
       display: inline-block;
       border-radius: 10px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.4rem;
       font-size: 0.9rem;
       line-height: 1.4;
       width: fit-content;
-      font-weight: 500;
+      box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.05);
 
       &.client-message {
-        background-color: #bbf246;
+        background-color: #9ac442;
         color: #000;
         margin-left: auto;
         text-align: right;
         border-radius: 10px 10px 0 10px;
+        font-weight: 350;
       }
 
       &.coach-message {
         background-color: #263238;
         margin-right: auto;
         border-radius: 10px 10px 10px 0;
+        font-weight: 280;
       }
     }
   }
@@ -102,6 +152,8 @@
     background-color: #2a2a2e;
     border-radius: 20px;
     padding: 0.5rem 1rem;
+    margin: 0.5rem 3rem 1rem 3rem;
+    box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.05);
 
     .message-input {
       flex: 1;

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./Messages.scss";
-import { getClientCollabotion } from '../../services/collaborationService';
-import { getCollaborationMessages } from '../../services/messageService';
-import { saveMessage } from '../../services/messageService';
-import { useMessageContext } from '../../Context/MessageContext';
+import MessagesSidebar from "./MessagesSidebar";
+import { getClientCollabotion } from "../../services/collaborationService";
+import { getCollaborationMessages } from "../../services/messageService";
+import { saveMessage } from "../../services/messageService";
+import { useMessageContext } from "../../Context/MessageContext";
 
 const Messages = () => {
   const socket = useMessageContext();
-  const [messages, setMessages] = useState<{ sender: string, text: string }[]>([]);
-
+  const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
+    []
+  );
 
   const [clientName, setClientName] = useState("");
   const [clientDate, setClientDate] = useState("");
@@ -24,60 +26,78 @@ const Messages = () => {
     console.log(collaborationId);
 
     if (!socket) return;
-    console.log("socket")
+    console.log("socket");
 
-    socket.emit('joinCollaboration', collaborationId, (ack: { error?: string }) => {
-      console.log("IM HERE")
-      if (ack.error) {
-        console.error(ack.error);
+    socket.emit(
+      "joinCollaboration",
+      collaborationId,
+      (ack: { error?: string }) => {
+        console.log("IM HERE");
+        if (ack.error) {
+          console.error(ack.error);
+        }
       }
-    });
+    );
 
     // Listen for new messages
-    socket.on('newMessage', (data: { collaborationId: string; message: { content: string, sender: string, timestamp: number } }) => {
-      console.log("kulit", data)
-      if (data.collaborationId === collaborationId) {
-        setMessages((prevMessages) => [
-          {
-            sender: data.message.sender === senderId ? 'client' : 'coach', // Ensure correct identification
-            text: data.message.content,
-          },
-            ...prevMessages
-        ]);
+    socket.on(
+      "newMessage",
+      (data: {
+        collaborationId: string;
+        message: { content: string; sender: string; timestamp: number };
+      }) => {
+        console.log("kulit", data);
+        if (data.collaborationId === collaborationId) {
+          setMessages((prevMessages) => [
+            {
+              sender: data.message.sender === senderId ? "client" : "coach", // Ensure correct identification
+              text: data.message.content,
+            },
+            ...prevMessages,
+          ]);
+        }
       }
-    });
+    );
 
     // Handle errors
-    socket.on('error', (err: Error) => {
-      console.error('Socket error:', err.message);
+    socket.on("error", (err: Error) => {
+      console.error("Socket error:", err.message);
       console.error(err.message);
     });
 
     // Cleanup listeners on component unmount
     return () => {
-      socket.off('newMessage');
-      socket.off('error');
+      socket.off("newMessage");
+      socket.off("error");
     };
   }, [socket, collaborationId]);
 
   useEffect(() => {
     fetchCollaboration();
-  }, [])
+  }, []);
 
   const fetchCollaboration = async () => {
     const collab = await getClientCollabotion();
 
     if (collab) {
-      const { firstName, lastName, clientImage, collaborationId, email, startDate, clientId } = collab;
-      const formattedDate = new Date(startDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+      const {
+        firstName,
+        lastName,
+        clientImage,
+        collaborationId,
+        email,
+        startDate,
+        clientId,
+      } = collab;
+      const formattedDate = new Date(startDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
-      setClientName(`${firstName} ${lastName}`)
-      setClientImage(clientImage)
+      setClientName(`${firstName} ${lastName}`);
+      setClientImage(clientImage);
       setSenderId(clientId);
-      setClientDate(formattedDate)
+      setClientDate(formattedDate);
       fetchMessages(clientId, collaborationId);
       setCollaborationId(collaborationId);
       setEmail(email);
@@ -91,7 +111,8 @@ const Messages = () => {
 
     if (messages) {
       const sortedMessages = messages.sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
 
       const mappedMessages = sortedMessages.map((message) => ({
@@ -100,12 +121,11 @@ const Messages = () => {
       }));
 
       setMessages(mappedMessages);
-      console.log(clientId)
+      console.log(clientId);
     } else {
       console.log("No messages found.");
     }
   };
-
 
   const handleSendMessage = async () => {
     if (newMessage.trim() && collaborationId) {
@@ -115,20 +135,19 @@ const Messages = () => {
 
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: 'coach', text: newMessage }
+          { sender: "coach", text: newMessage },
         ]);
         setNewMessage(""); // Clear input field after sending
-
       } catch (error) {
         console.error("Error saving message:", error);
-        alert("Error sending message. Please check your connection and try again.");
+        alert(
+          "Error sending message. Please check your connection and try again."
+        );
       }
     } else {
       console.log("New message or collaborationId is missing.");
     }
   };
-
-
 
   // hit enter to send message
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -140,51 +159,51 @@ const Messages = () => {
 
   return (
     <div className="messages-container">
-      {/* Header */}
-      <div className="messages-header">
-        <h2>Messages</h2>
-      </div>
-
-      {/* Coach Info */}
-      <div className="coach-desc">
-        <img src={clientImage} alt="Coach" />
-        <div className="coach-details">
-          <h4>{clientName}</h4>
-          <p>{clientEmail}</p>
-          <p>Client Since: {clientDate}</p>
-        </div>
-         
-      </div>
-
-      {/* Message Chat Area */}
-      <div className="chat-area overflow-y-auto">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`message-bubble ${message.sender === "coach" ? "client-message" : "coach-message"
-              }`}
-          >
-            {message.text}
+      <div className="messages-layout">
+        <MessagesSidebar />
+        <div className="messages-content">
+          {/* Coach Info */}
+          <div className="coach-desc">
+            <img src={clientImage} alt="Coach" />
+            <div className="coach-details">
+              <h4>{clientName}</h4>
+              <p>{clientEmail}</p>
+              <p>Client Since: {clientDate}</p>
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Input Area */}
-      <div className="message-input-container">
-        <input
-          type="text"
-          className="message-input"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message"
-        />
-        <button className="send-button" onClick={handleSendMessage}>
-          <Icon icon="mdi:send" />
-        </button>
-      </div>
+          {/* Message Chat Area */}
+          <div className="chat-area overflow-y-auto">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`message-bubble ${
+                  message.sender === "coach"
+                    ? "client-message"
+                    : "coach-message"
+                }`}
+              >
+                {message.text}
+              </div>
+            ))}
+          </div>
 
-      
+          {/* Input Area */}
+          <div className="message-input-container">
+            <input
+              type="text"
+              className="message-input"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message"
+            />
+            <button className="send-button" onClick={handleSendMessage}>
+              <Icon icon="mdi:send" />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

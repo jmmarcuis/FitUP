@@ -41,7 +41,7 @@ const CoachDetailsModal: React.FC<CoachDetailsModalProps> = ({
         />
       </div>
       <div className="coach-info">
-        <h4>{`${coach.firstName} ${coach.lastName}`}</h4>
+        <h4 className="coach-name">{`${coach.firstName} ${coach.lastName}`}</h4>
         <p>
           <strong>Specialization:</strong> {coach.coachSpecialization}
         </p>
