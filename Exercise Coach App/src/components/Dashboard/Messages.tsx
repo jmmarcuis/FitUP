@@ -114,14 +114,10 @@ const Messages = () => {
     if (newMessage.trim() && collaborationId) {
       try {
         console.log("Calling saveMessage API...");
-        const savedMessage = await saveMessage(newMessage, collaborationId);
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'coach', text: newMessage }
-        ]);
-        setNewMessage(""); // Clear input field after sending
-
+        await saveMessage(newMessage, collaborationId); // Save message to the backend
+  
+        // Clear input field after sending
+        setNewMessage(""); 
       } catch (error) {
         console.error("Error saving message:", error);
         alert("Error sending message. Please check your connection and try again.");
@@ -130,7 +126,7 @@ const Messages = () => {
       console.log("New message or collaborationId is missing.");
     }
   };
-
+  
   const handleOpenModal = () => {
     setModalVisible(true);
   };
