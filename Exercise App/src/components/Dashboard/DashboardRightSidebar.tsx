@@ -86,11 +86,6 @@ const DashboardRightSidebar: React.FC = () => {
         )}
       </div>
 
-      <div className="scheduled-workouts">
-        <h4>Scheduled</h4>
-        {/* You can add scheduled workouts here if needed */}
-      </div>
-
       <div className="assigned-coach">
     <h4>Your Assigned Coach</h4>
     {coachLoading ? (

@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const Client = require('../Models/ClientModel'); 
+const Coach = require('../Models/coachModel'); 
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.header('Authorization');
@@ -35,4 +37,22 @@ const isCoach = (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken, isCoach };
+async function verifySocketToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("GENE", decoded);
+    const client = await Client.findById(decoded.id);
+    console.log("THIS IS THE CLIENT: ", client);
+    if (client) return client;
+
+    const coach = await Coach.findById(decoded.id);
+    console.log("THIS IS THE COACH: ", coach);
+    if (coach) return coach;
+
+    throw new Error("User not found");
+  } catch (error) {
+    console.error("Authentication error:", error.message);
+    throw new Error("Invalid token");
+  }
+}
+module.exports = { verifyToken, isCoach, verifySocketToken};

@@ -61,7 +61,8 @@
     padding-right: 10px;
     margin-bottom: 1rem;
     display: flex;
-    flex-direction: column;
+    scroll-snap-type: y mandatory;
+    flex-direction: column-reverse;
 
     &::-webkit-scrollbar {
       width: 0px;

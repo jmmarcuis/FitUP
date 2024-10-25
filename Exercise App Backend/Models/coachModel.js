@@ -13,4 +13,4 @@ const CoachSchema = new Schema({
   collaborations: [{ type: Schema.Types.ObjectId, ref: 'Collaboration' }]
 });
 
-module.exports = mongoose.model("Coach", CoachSchema);
+module.exports = mongoose.models.Coach || mongoose.model('Coach', CoachSchema);

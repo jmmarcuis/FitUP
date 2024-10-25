@@ -5,8 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { WorkoutProvider } from "./Context/WorkoutContext";
-import { ResponsiveProvider } from "./Context/ResponsiveContext";
+ import { ResponsiveProvider } from "./Context/ResponsiveContext";
 import { SearchProvider } from "./Context/SearchContext";
 import Homepage from "./pages/Homepage";
 import LoginPage from "./pages/LoginPage";
@@ -22,8 +21,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <WorkoutProvider>
-      <ResponsiveProvider>
+       <ResponsiveProvider>
         <SearchProvider>
           <Router>
             <AnimatePresence mode="wait">
@@ -47,8 +45,7 @@ const App: React.FC = () => {
           </Router>
         </SearchProvider>
       </ResponsiveProvider>
-    </WorkoutProvider>
-  );
+   );
 };
 
 export default App;

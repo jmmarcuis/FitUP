@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import DashboardHome from "../components/Dashboard/DashboardHome";
 // import Workouts from "../components/Dashboard/Workouts";
 // import Settings from "../components/Dashboard/Settings";
-import Messages from "../components/Dashboard/Messages";
+import { MessageProvider } from "../Context/MessageContext";
 import Clients from "../components/Dashboard/Clients";
 
 const DashboardPage: React.FC = () => {
@@ -42,7 +42,7 @@ const DashboardPage: React.FC = () => {
               <Route path="clients" element={<Clients />} />
               {/* <Route path="workouts" element={<Workouts />} /> */}
               {/* <Route path="settings" element={<Settings />} /> */}
-              <Route path="messages" element={<Messages />} />
+              <Route path="messages" element={<MessageProvider />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           )}

@@ -11,6 +11,7 @@ router.post('/collaborations/:id/finish', verifyToken, isCoach, collaborationCon
 router.get('/coach/active-clients', verifyToken, isCoach, collaborationController.getActiveClients);
 
 router.get('/client/assigned-coach' , verifyToken, collaborationController.getAssignedCoach)
+router.get('/client/active-coach', verifyToken, collaborationController.getCollaborationByClient);
 
 router.get('/coach/active-clients-count', verifyToken, isCoach, collaborationController.getActiveClientsCount);
 router.get('/coach/pending-clients-count', verifyToken, isCoach, collaborationController.getPendingRequestsCount);
