@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./Messages.scss";
 import MessagesSidebar from "./MessagesSidebar";
-import { ActiveClient, getActiveClients } from "../../services/collaborationService";
+import { ActiveClient } from "../../services/collaborationService";
 import { getCollaborationMessages, saveMessage } from "../../services/messageService";
 import { useMessageContext } from "../../Context/MessageContext";
 
