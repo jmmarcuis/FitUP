@@ -56,7 +56,7 @@ const MessagesSidebar: React.FC<MessagesSidebarProps> = ({
   return (
     <div className="messages-sidebar">
       <div className="sidebar-header">
-        <h3>Active Clients</h3>
+        <h3 className='active-clients-title'>Active Clients</h3>
       </div>
       <div className="clients-list">
         {activeClients.length === 0 ? (
