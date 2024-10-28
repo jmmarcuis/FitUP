@@ -108,15 +108,10 @@ const Messages = () => {
     if (newMessage.trim() && collaborationId) {
       try {
         console.log("Calling saveMessage API...");
-        const savedMessage = await saveMessage(newMessage, collaborationId);
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'client', text: newMessage }
-        ]);
-
-        setNewMessage("");
-
+        await saveMessage(newMessage, collaborationId); // Save message to the backend
+  
+        // Clear input field after sending
+        setNewMessage(""); 
       } catch (error) {
         console.error("Error saving message:", error);
         alert("Error sending message. Please check your connection and try again.");
