@@ -1,94 +1,92 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Icon } from "@iconify/react";
-import "./MessagesSidebar.scss";
-import tempImageChangeThisPls from "../../assets/TrainerImages/coach-1.jpg";
+import React, { useEffect, useState } from 'react';
+import { ActiveClient } from '../../services/collaborationService';
+import { getActiveClients } from '../../services/collaborationService';
+import './MessagesSidebar.scss';
 
-const MessagesSidebar: React.FC = () => {
-  // Mock messages data
-  const messages = [
-    {
-      id: "1",
-      name: "Sukuna",
-      lastMessage: "Hey, how are you?",
-      timestamp: "10:30 AM",
-      imageUrl: tempImageChangeThisPls,
-    },
-    {
-      id: "2",
-      name: "Light Yagami",
-      lastMessage: "See you at the meeting!",
-      timestamp: "9:45 AM",
-      imageUrl: tempImageChangeThisPls,
-    },
-    {
-      id: "3",
-      name: "Denji",
-      lastMessage: "Can you send me the report?",
-      timestamp: "Yesterday",
-      imageUrl: tempImageChangeThisPls,
-    },
-    {
-      id: "4",
-      name: "Gojo",
-      lastMessage: "Can you send me the report?",
-      timestamp: "Yesterday",
-      imageUrl: tempImageChangeThisPls,
-    },
-  ];
+interface MessagesSidebarProps {
+  onClientSelect: (client: ActiveClient) => void;
+  selectedClientId?: string;
+}
 
-  const [isExpanded, setIsExpanded] = useState(false);
+const MessagesSidebar: React.FC<MessagesSidebarProps> = ({ 
+  onClientSelect, 
+  selectedClientId 
+}) => {
+  const [activeClients, setActiveClients] = useState<ActiveClient[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggleSidebar = () => {
-    setIsExpanded(!isExpanded);
+  useEffect(() => {
+    fetchActiveClients();
+  }, []);
+
+  const fetchActiveClients = async () => {
+    try {
+      setIsLoading(true);
+      const clients = await getActiveClients();
+      setActiveClients(clients);
+      // If there are clients and none is selected, select the first one
+      if (clients.length > 0 && !selectedClientId) {
+        onClientSelect(clients[0]);
+      }
+    } catch (err) {
+      setError('Failed to load clients');
+      console.error('Error fetching active clients:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  if (isLoading) {
+    return (
+      <div className="messages-sidebar">
+        <div className="loading-state">Loading clients...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="messages-sidebar">
+        <div className="error-state">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <aside
-      className={`messages-sidebar ${isExpanded ? "expanded" : "collapsed"}`}
-    >
-      <h2 className="sidebar-title">
-        <span className="toggle-icon">
-          <button className="toggle-button" onClick={toggleSidebar}>
-            <Icon
-              className="arrow-icon"
-              icon={isExpanded ? "mdi:chevron-left" : "mdi:chevron-right"}
-              style={{ color: "#fff" }}
-            />
-          </button>
-        </span>
-        <span className={`messages-title ${isExpanded ? "" : "hidden"}`}>
-          Messages
-        </span>
-      </h2>
-      <div className="separator"></div>
-      <ul>
-        {messages.map((message) => (
-          <li key={message.id}>
-            <Link to={`/dashboard/messages`} className="message-link">
-              <div className={`message ${message.unread ? "unread" : ""}`}>
+    <div className="messages-sidebar">
+      <div className="sidebar-header">
+        <h3>Active Clients</h3>
+      </div>
+      <div className="clients-list">
+        {activeClients.length === 0 ? (
+          <div className="no-clients">No active clients found</div>
+        ) : (
+          activeClients.map((client) => (
+            <div
+              key={client.clientId}
+              className={`client-item ${
+                selectedClientId === client.clientId ? 'selected' : ''
+              }`}
+              onClick={() => onClientSelect(client)}
+            >
+              <div className="client-avatar">
                 <img
-                  src={message.imageUrl}
-                  alt={`${message.name}'s avatar`}
-                  className="message-image"
+                  src={client.clientImage}
+                  alt={`${client.firstName} ${client.lastName}`}
                 />
-                {isExpanded && (
-                  <div className="message-details">
-                    <div className="message-name">{message.name}</div>
-                    <div className="last-message">{message.lastMessage}</div>
-                  </div>
-                )}
-                {/*
-                  Uncomment this if u want to add the timestamps
-                  isExpanded && (
-                  <div className="timestamp">{message.timestamp}</div>
-                )*/}
               </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </aside>
+              <div className="client-info">
+                <div className="client-name">
+                  {client.firstName} {client.lastName}
+                </div>
+                <div className="client-email">{client.email}</div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 };
 

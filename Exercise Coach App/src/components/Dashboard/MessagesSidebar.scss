@@ -1,120 +1,82 @@
 .messages-sidebar {
   width: 300px;
-  height: 100vh;
-  background-color: #232323;
-  color: #ffffff;
-  padding: 1rem;
-  box-shadow: 0 5px 5px 4px rgba(0, 0, 0, 0.2);
-  transition: width 0.5s ease;
-  z-index: 50;
+  border-right: 1px solid #e5e7eb;
+  height: 100%;
+  background-color: #1c1e21;
+  display: flex;
+  flex-direction: column;
 
-  &.collapsed {
-    width: 80px; // Adjust width for collapsed state
+  .sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #111827;
+    }
   }
 
-  &.expanded {
-    width: 300px; // Full width for expanded state
-  }
+  .clients-list {
+    overflow-y: auto;
+    flex: 1;
 
-  .sidebar-title {
-    display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    padding: 1rem 0rem 0rem 0.7rem;
-    margin-bottom: 1.3rem;
-    font-weight: 450;
-    transition: height 0.5s ease, opacity 0.5s ease;
-
-    .toggle-button {
-      margin-right: 1rem; // Space between icon and title
-      background-color: transparent;
-      border: none;
-      font-size: 1.5rem;
+    .client-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
       cursor: pointer;
-    }
+      transition: background-color 0.2s;
+      border-bottom: 1px solid #e5e7eb;
 
-    .messages-title {
-      transition: opacity 0.5s ease;
-  
-      &.hidden {
-        opacity: 0; // hide title but keep the space occupied
-        height: 0; // prevent layout shifts
-        margin: 0; // prevent additional spacing
-        padding: 0; // prevent additional padding
-        overflow: hidden; // hide overflow to maintain layout
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      &.selected {
+        background-color: #e5e7eb;
+      }
+
+      .client-avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 1rem;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+
+      .client-info {
+        flex: 1;
+
+        .client-name {
+          font-weight: 500;
+          color: #111827;
+          margin-bottom: 0.25rem;
+        }
+
+        .client-email {
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
       }
     }
   }
 
-  ul {
-    list-style: none;
-    padding: 0;
+  .loading-state,
+  .error-state,
+  .no-clients {
+    padding: 1.5rem;
+    text-align: center;
+    color: #6b7280;
+  }
 
-    li {
-      margin-bottom: 0.5rem;
-
-      .message-link {
-        text-decoration: none;
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        border-radius: 5px;
-        flex-direction: column;
-
-        &:hover {
-          background-color: #2e363d;
-        }
-
-        .message {
-          display: flex;
-          align-items: center;
-          width: 100%; 
-          padding: 0.3rem 0rem;
-          justify-content: center;
-
-          &.unread {
-            border: 2px solid rgb(76, 201, 76); // border for unread messages
-          }
-
-          .message-image {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 50%;
-          }
-
-          .message-details {
-            margin-left: 1rem;
-            flex: 1; 
-            min-width: 0; 
-            transition: opacity 0.5s ease;
-            font-weight: 300;
-            font-size: 1rem;
-
-            .message-name {
-              font-weight: 500;
-              transition: opacity 0.5s ease;
-            }
-
-            .last-message {
-              color: #B8B8B8;
-              font-size: 0.9rem;
-              white-space: nowrap; 
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-          }
-
-          .timestamp {
-            color: #B8B8B8; 
-            font-size: 0.7rem; 
-            margin-left: 1rem;
-            white-space: nowrap;
-            flex-shrink: 0;
-          }
-        }
-      }
-    }
+  .error-state {
+    color: #ef4444;
   }
 }

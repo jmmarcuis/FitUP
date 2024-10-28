@@ -2,55 +2,44 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import "./Messages.scss";
 import MessagesSidebar from "./MessagesSidebar";
-import { getClientCollabotion } from "../../services/collaborationService";
-import { getCollaborationMessages } from "../../services/messageService";
-import { saveMessage } from "../../services/messageService";
+import { ActiveClient, getActiveClients } from "../../services/collaborationService";
+import { getCollaborationMessages, saveMessage } from "../../services/messageService";
 import { useMessageContext } from "../../Context/MessageContext";
+
+interface Message {
+  sender: string;
+  text: string;
+}
 
 const Messages = () => {
   const socket = useMessageContext();
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
-    []
-  );
-
-  const [clientName, setClientName] = useState("");
-  const [clientDate, setClientDate] = useState("");
-  const [clientEmail, setEmail] = useState("");
-  const [clientImage, setClientImage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [selectedClient, setSelectedClient] = useState<ActiveClient | null>(null);
   const [newMessage, setNewMessage] = useState("");
-  const [collaborationId, setCollaborationId] = useState<string>("");
-  const [senderId, setSenderId] = useState<string>("");
 
   useEffect(() => {
-    console.log(socket);
-    console.log(collaborationId);
-
-    if (!socket) return;
-    console.log("socket");
+    if (!socket || !selectedClient?.collaborationId) return;
 
     socket.emit(
       "joinCollaboration",
-      collaborationId,
+      selectedClient.collaborationId,
       (ack: { error?: string }) => {
-        console.log("IM HERE");
         if (ack.error) {
           console.error(ack.error);
         }
       }
     );
 
-    // Listen for new messages
     socket.on(
       "newMessage",
       (data: {
         collaborationId: string;
         message: { content: string; sender: string; timestamp: number };
       }) => {
-        console.log("kulit", data);
-        if (data.collaborationId === collaborationId) {
+        if (data.collaborationId === selectedClient.collaborationId) {
           setMessages((prevMessages) => [
             {
-              sender: data.message.sender === senderId ? "client" : "coach", // Ensure correct identification
+              sender: data.message.sender === selectedClient.clientId ? "client" : "coach",
               text: data.message.content,
             },
             ...prevMessages,
@@ -59,97 +48,60 @@ const Messages = () => {
       }
     );
 
-    // Handle errors
     socket.on("error", (err: Error) => {
       console.error("Socket error:", err.message);
-      console.error(err.message);
     });
 
-    // Cleanup listeners on component unmount
     return () => {
       socket.off("newMessage");
       socket.off("error");
     };
-  }, [socket, collaborationId]);
+  }, [socket, selectedClient]);
 
-  useEffect(() => {
-    fetchCollaboration();
-  }, []);
-
-  const fetchCollaboration = async () => {
-    const collab = await getClientCollabotion();
-
-    if (collab) {
-      const {
-        firstName,
-        lastName,
-        clientImage,
-        collaborationId,
-        email,
-        startDate,
-        clientId,
-      } = collab;
-      const formattedDate = new Date(startDate).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      setClientName(`${firstName} ${lastName}`);
-      setClientImage(clientImage);
-      setSenderId(clientId);
-      setClientDate(formattedDate);
-      fetchMessages(clientId, collaborationId);
-      setCollaborationId(collaborationId);
-      setEmail(email);
-    } else {
-      console.log("No active coach found");
-    }
+  const handleClientSelect = async (client: ActiveClient) => {
+    setSelectedClient(client);
+    await fetchMessages(client.clientId, client.collaborationId);
   };
 
   const fetchMessages = async (clientId: string, collaborationId: string) => {
-    const messages = await getCollaborationMessages(collaborationId);
+    try {
+      const messages = await getCollaborationMessages(collaborationId);
+      if (messages) {
+        const sortedMessages = messages.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
 
-    if (messages) {
-      const sortedMessages = messages.sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
+        const mappedMessages = sortedMessages.map((message) => ({
+          sender: message.sender === clientId ? "client" : "coach",
+          text: message.content,
+        }));
 
-      const mappedMessages = sortedMessages.map((message) => ({
-        sender: message.sender === clientId ? "client" : "coach",
-        text: message.content,
-      }));
-
-      setMessages(mappedMessages);
-      console.log(clientId);
-    } else {
-      console.log("No messages found.");
+        setMessages(mappedMessages);
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
   };
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() && collaborationId) {
+    if (newMessage.trim() && selectedClient?.collaborationId) {
       try {
-        console.log("Calling saveMessage API...");
-        const savedMessage = await saveMessage(newMessage, collaborationId);
-
+        await saveMessage(newMessage, selectedClient.collaborationId);
         setMessages((prevMessages) => [
-          ...prevMessages,
           { sender: "coach", text: newMessage },
+          ...prevMessages,
         ]);
-        setNewMessage(""); // Clear input field after sending
+        setNewMessage("");
       } catch (error) {
         console.error("Error saving message:", error);
         alert(
           "Error sending message. Please check your connection and try again."
         );
       }
-    } else {
-      console.log("New message or collaborationId is missing.");
     }
   };
 
-  // hit enter to send message
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -160,48 +112,66 @@ const Messages = () => {
   return (
     <div className="messages-container">
       <div className="messages-layout">
-        <MessagesSidebar />
+        <MessagesSidebar 
+          onClientSelect={handleClientSelect}
+          selectedClientId={selectedClient?.clientId}
+        />
         <div className="messages-content">
-          {/* Coach Info */}
-          <div className="coach-desc">
-            <img src={clientImage} alt="Coach" />
-            <div className="coach-details">
-              <h4>{clientName}</h4>
-              <p>{clientEmail}</p>
-              <p>Client Since: {clientDate}</p>
-            </div>
-          </div>
-
-          {/* Message Chat Area */}
-          <div className="chat-area overflow-y-auto">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`message-bubble ${
-                  message.sender === "coach"
-                    ? "client-message"
-                    : "coach-message"
-                }`}
-              >
-                {message.text}
+          {selectedClient ? (
+            <>
+              <div className="client-desc">
+                <img src={selectedClient.clientImage} alt="Client" />
+                <div className="client-details">
+                  <h4>{`${selectedClient.firstName} ${selectedClient.lastName}`}</h4>
+                  <p>{selectedClient.email}</p>
+                  <p>
+                    Client Since:{" "}
+                    {new Date(selectedClient.startDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
 
-          {/* Input Area */}
-          <div className="message-input-container">
-            <input
-              type="text"
-              className="message-input"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type a message"
-            />
-            <button className="send-button" onClick={handleSendMessage}>
-              <Icon icon="mdi:send" />
-            </button>
-          </div>
+              <div className="chat-area overflow-y-auto">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`message-bubble ${
+                      message.sender === "coach"
+                        ? "coach-message"
+                        : "client-message"
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                ))}
+              </div>
+
+              <div className="message-input-container">
+                <input
+                  type="text"
+                  className="message-input"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a message"
+                />
+                <button className="send-button" onClick={handleSendMessage}>
+                  <Icon icon="mdi:send" />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="no-client-selected">
+              <p>Select a client to start messaging</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
