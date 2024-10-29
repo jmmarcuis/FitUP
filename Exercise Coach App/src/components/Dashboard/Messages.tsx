@@ -20,6 +20,21 @@ const Messages = () => {
   useEffect(() => {
     if (!socket || !selectedClient?.collaborationId) return;
 
+    const handleNewMessage = (data: {
+      collaborationId: string;
+      message: { content: string; sender: string; timestamp: number };
+    }) => {
+      if (data.collaborationId === selectedClient.collaborationId) {
+        setMessages((prevMessages) => [
+          {
+            sender: data.message.sender === selectedClient.clientId ? "client" : "coach",
+            text: data.message.content,
+          },
+          ...prevMessages,
+        ]);
+      }
+    };
+
     socket.emit(
       "joinCollaboration",
       selectedClient.collaborationId,
@@ -30,32 +45,16 @@ const Messages = () => {
       }
     );
 
-    socket.on(
-      "newMessage",
-      (data: {
-        collaborationId: string;
-        message: { content: string; sender: string; timestamp: number };
-      }) => {
-        if (data.collaborationId === selectedClient.collaborationId) {
-          setMessages((prevMessages) => [
-            {
-              sender: data.message.sender === selectedClient.clientId ? "client" : "coach",
-              text: data.message.content,
-            },
-            ...prevMessages,
-          ]);
-        }
-      }
-    );
+    socket.on("newMessage", handleNewMessage);
 
     socket.on("error", (err: Error) => {
       console.error("Socket error:", err.message);
     });
 
     return () => {
-      socket.off("newMessage");
+      socket.off("newMessage", handleNewMessage); 
       socket.off("error");
-    };
+    };  
   }, [socket, selectedClient]);
 
   const handleClientSelect = async (client: ActiveClient) => {
@@ -88,10 +87,6 @@ const Messages = () => {
     if (newMessage.trim() && selectedClient?.collaborationId) {
       try {
         await saveMessage(newMessage, selectedClient.collaborationId);
-        setMessages((prevMessages) => [
-          { sender: "coach", text: newMessage },
-          ...prevMessages,
-        ]);
         setNewMessage("");
       } catch (error) {
         console.error("Error saving message:", error);
@@ -112,7 +107,7 @@ const Messages = () => {
   return (
     <div className="messages-container">
       <div className="messages-layout">
-        <MessagesSidebar 
+        <MessagesSidebar
           onClientSelect={handleClientSelect}
           selectedClientId={selectedClient?.clientId}
         />
@@ -142,11 +137,10 @@ const Messages = () => {
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`message-bubble ${
-                      message.sender === "coach"
-                        ? "coach-message"
-                        : "client-message"
-                    }`}
+                    className={`message-bubble ${message.sender === "coach"
+                      ? "client-message"
+                      : "coach-message"
+                      }`}
                   >
                     {message.text}
                   </div>
