@@ -57,7 +57,7 @@ app.use ('/coach' , coachRoutes);
 app.use ('/collab' , collaborationRoutes);
 app.use ('/message' , messageRoutes);
 
-app.use('/exercise', verifyToken, exerciseRoutes);
+app.use('/exercise', exerciseRoutes);
 app.use('/workout', verifyToken, workoutRoutes);
 
 // Public routes

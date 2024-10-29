@@ -26,10 +26,7 @@ const ClientReportCard = () => {
         <span className="stat-value">{clientCounts.pendingClients}</span>
         <span className="stat-label">Pending Clients</span>
       </div>
-      <div className="stat-box">
-        <span className="stat-value">10</span>
-        <span className="stat-label">Assigned Workout Today</span>
-      </div>
+      
     </div>
   );
 };
