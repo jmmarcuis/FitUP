@@ -48,7 +48,7 @@ npm install
 ```
 
 ### 4. Run the project
-Head to the three folders and run each project in powershell
+Head to the three folders and run each project in Powershell or Bash
 
 ```bash
 npm run dev
