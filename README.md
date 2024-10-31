@@ -1,13 +1,14 @@
 # FitUP
 
-This project is a workout management application that allows clients and coaches to communicate in real-time through a chat interface. It includes end-to-end messaging service, secure authentication, and an intuitive frontend built with React.
+This project is a workout management application that allows clients and coaches to communicate in real-time through a chat interface. It includes an end-to-end messaging service, secure authentication, an intuitive frontend built with React, and personalized workout management.
 
 ## Features
 
 - **Real-time Messaging**: Clients and coaches can exchange messages in real-time.
 - **User Authentication**: Secure login for clients and coaches with JWT-based token authentication.
-- **Message Storage**: Messages are stored in MongoDB and fetched on demand.
 - **Role-based Access**: Only authorized users can send and view messages in specific collaborations.
+- **Workout Management**: Clients can see their own workout routines and progress.
+- **Collaborative Editing**: Coaches can modify client workouts to optimize routines and track progress directly within the app.
 
 ## Tech Stack
 
@@ -46,7 +47,7 @@ cd "Exercise Coach App"
 npm install 
 ```
 
-### 1. Run the project
+### 4. Run the project
 Head to the three folders and run each project in powershell
 
 ```bash
